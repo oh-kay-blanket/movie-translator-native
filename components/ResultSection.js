@@ -26,9 +26,11 @@ const SpeakerIcon = ({ size = 24, color = '#d62b1e' }) => (
 const ResultSection = ({
   language,
   languageList,
+  languageNames,
   translatedTitle,
   translatedPoster,
   loading,
+  translations,
   onLanguageChange,
 }) => {
   const [showPosterModal, setShowPosterModal] = useState(false);
@@ -49,6 +51,8 @@ const ResultSection = ({
         <LanguagePicker
           language={language}
           languageList={languageList}
+          languageNames={languageNames}
+          selectLanguageText={translations.selectLanguage}
           onLanguageChange={onLanguageChange}
         />
 
@@ -58,18 +62,18 @@ const ResultSection = ({
               <TouchableOpacity onPress={() => setShowPosterModal(true)}>
                 <Image source={{ uri: translatedPoster }} style={styles.poster} />
               </TouchableOpacity>
-            ) : translatedTitle && !translatedTitle.startsWith('No ') ? (
+            ) : translatedTitle && !translatedTitle.includes(translations.noTitleFound) ? (
               <View style={[styles.poster, styles.noPoster]}>
-                <Text style={styles.noPosterText}>No {language.engName} poster</Text>
+                <Text style={styles.noPosterText}>{translations.noPoster}</Text>
               </View>
             ) : null}
 
             <View style={styles.titleContainer}>
               <View style={styles.titleRow}>
                 <Text style={styles.title}>
-                  {loading ? 'searching...' : translatedTitle}
+                  {loading ? translations.searching : translatedTitle}
                 </Text>
-                {!loading && translatedTitle && !translatedTitle.startsWith('No ') && (
+                {!loading && translatedTitle && !translatedTitle.includes(translations.noTitleFound) && (
                   <TouchableOpacity style={styles.speakButton} onPress={handleSpeak}>
                     <SpeakerIcon size={24} color="#d62b1e" />
                   </TouchableOpacity>

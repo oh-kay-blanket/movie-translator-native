@@ -21,12 +21,15 @@ import AutocompleteDropdown from './AutocompleteDropdown';
 const SourceSection = ({
   language,
   languageList,
+  languageNames,
+  deviceLanguage,
   query,
   topHits,
   originalTitle,
   originalYear,
   originalPoster,
   loading,
+  translations,
   onLanguageChange,
   onInput,
 }) => {
@@ -57,13 +60,16 @@ const SourceSection = ({
         <LanguagePicker
           language={language}
           languageList={languageList}
+          languageNames={languageNames}
+          deviceLanguage={deviceLanguage}
+          selectLanguageText={translations.selectLanguage}
           onLanguageChange={onLanguageChange}
         />
 
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="search for a movie"
+            placeholder={translations.placeholder}
             placeholderTextColor="#999"
             value={query}
             onChangeText={handleTextChange}
@@ -93,7 +99,7 @@ const SourceSection = ({
             )}
             <View style={styles.titleContainer}>
               <Text style={styles.title}>
-                {loading ? 'searching...' : originalTitle}
+                {loading ? translations.searching : originalTitle}
               </Text>
               {!loading && originalYear && (
                 <Text style={styles.year}>({originalYear})</Text>

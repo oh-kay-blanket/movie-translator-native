@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,14 +7,75 @@ import {
   TouchableOpacity,
   Pressable,
   ScrollView,
+  Animated,
+  Dimensions,
 } from 'react-native';
 
-const LanguagePicker = ({ language, languageList, onLanguageChange }) => {
+const { height: screenHeight } = Dimensions.get('window');
+
+const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+
+  useEffect(() => {
+    if (showPicker) {
+      setModalVisible(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: screenHeight,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setModalVisible(false);
+      });
+    }
+  }, [showPicker, fadeAnim, slideAnim]);
 
   const handleSelect = (index) => {
     onLanguageChange(index);
     setShowPicker(false);
+  };
+
+  // Find the device language in the list and its index
+  const deviceLangIndex = deviceLanguage
+    ? languageList.findIndex(lang => lang.code === deviceLanguage.code)
+    : -1;
+
+  // Create reordered list with device language first (if it exists in the list)
+  const reorderedList = deviceLangIndex >= 0
+    ? [
+        languageList[deviceLangIndex],
+        ...languageList.filter((_, i) => i !== deviceLangIndex),
+      ]
+    : languageList;
+
+  // Map reordered index back to original index
+  const getOriginalIndex = (reorderedIndex) => {
+    if (deviceLangIndex < 0) return reorderedIndex;
+    if (reorderedIndex === 0) return deviceLangIndex;
+    const lang = reorderedList[reorderedIndex];
+    return languageList.findIndex(l => l.code === lang.code);
   };
 
   return (
@@ -29,18 +90,18 @@ const LanguagePicker = ({ language, languageList, onLanguageChange }) => {
       </TouchableOpacity>
 
       <Modal
-        visible={showPicker}
+        visible={modalVisible}
         transparent={true}
-        animationType="slide"
+        animationType="none"
         onRequestClose={() => setShowPicker(false)}
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setShowPicker(false)}
-        >
-          <View style={styles.modalContent}>
+        <View style={styles.modalContainer}>
+          <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
+            <Pressable style={styles.overlayPressable} onPress={() => setShowPicker(false)} />
+          </Animated.View>
+          <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim }] }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Language</Text>
+              <Text style={styles.modalTitle}>{selectLanguageText || 'Select Language'}</Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setShowPicker(false)}
@@ -49,28 +110,37 @@ const LanguagePicker = ({ language, languageList, onLanguageChange }) => {
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.listContainer}>
-              {languageList.map((lang, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.listItem,
-                    language.code === lang.code && styles.listItemSelected,
-                  ]}
-                  onPress={() => handleSelect(index)}
-                >
-                  <Text
+              {reorderedList.map((lang, index) => {
+                const isDeviceLanguage = deviceLanguage && lang.code === deviceLanguage.code;
+                return (
+                  <TouchableOpacity
+                    key={lang.code}
                     style={[
-                      styles.listItemText,
-                      language.code === lang.code && styles.listItemTextSelected,
+                      styles.listItem,
+                      language.code === lang.code && styles.listItemSelected,
+                      isDeviceLanguage && styles.listItemDefault,
                     ]}
+                    onPress={() => handleSelect(getOriginalIndex(index))}
                   >
-                    {lang.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    <Text
+                      style={[
+                        styles.listItemText,
+                        language.code === lang.code && styles.listItemTextSelected,
+                      ]}
+                    >
+                      {lang.name}
+                    </Text>
+                    {languageNames && languageNames[lang.code] !== lang.name && (
+                      <Text style={styles.listItemSubtext}>
+                        {languageNames[lang.code]}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
-          </View>
-        </Pressable>
+          </Animated.View>
+        </View>
       </Modal>
     </View>
   );
@@ -89,10 +159,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  modalOverlay: {
+  modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  overlayPressable: {
+    flex: 1,
   },
   modalContent: {
     backgroundColor: '#fff',
@@ -131,6 +207,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  listItemDefault: {
+    backgroundColor: '#f9f9f9',
+    borderBottomWidth: 2,
+    borderBottomColor: '#ddd',
+  },
   listItemSelected: {
     backgroundColor: '#fff5f5',
   },
@@ -141,6 +222,11 @@ const styles = StyleSheet.create({
   listItemTextSelected: {
     color: '#d62b1e',
     fontWeight: 'bold',
+  },
+  listItemSubtext: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
   },
 });
 
