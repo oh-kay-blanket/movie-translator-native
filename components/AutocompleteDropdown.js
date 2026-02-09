@@ -2,7 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
@@ -14,19 +14,20 @@ const AutocompleteDropdown = ({ suggestions, onSelect, visible }) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={suggestions}
-        keyExtractor={(item, index) => index.toString()}
-        keyboardShouldPersistTaps="handled"
-        renderItem={({ item }) => (
+      <ScrollView keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+        {suggestions.map((item, index) => (
           <TouchableOpacity
+            key={index}
             style={styles.item}
             onPress={() => onSelect(item)}
           >
-            <Text style={styles.itemText}>{item}</Text>
+            <Text style={styles.itemText}>
+              {item.title}
+              {item.year && <Text style={styles.yearText}> ({item.year})</Text>}
+            </Text>
           </TouchableOpacity>
-        )}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -52,6 +53,10 @@ const styles = StyleSheet.create({
   itemText: {
     color: '#d62b1e',
     fontSize: 16,
+  },
+  yearText: {
+    color: '#888',
+    fontSize: 14,
   },
 });
 

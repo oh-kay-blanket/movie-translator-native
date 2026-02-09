@@ -5,6 +5,9 @@ import {
   TextInput,
   StyleSheet,
   Keyboard,
+  Modal,
+  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AutocompleteDropdown from './AutocompleteDropdown';
@@ -18,6 +21,7 @@ const Search = ({
   handleInput,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
 
   const handleTextChange = (text) => {
     handleInput(text);
@@ -38,28 +42,62 @@ const Search = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>MOVIE TITLES IN </Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedIndex}
-            onValueChange={(itemValue) => handleLanguage(itemValue)}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-          >
-            {languageList.map((lang, index) => (
-              <Picker.Item
-                key={index}
-                label={lang.name.toUpperCase()}
-                value={index}
-              />
-            ))}
-          </Picker>
-        </View>
+        <TouchableOpacity
+          style={styles.pickerButton}
+          onPress={() => setShowPicker(true)}
+        >
+          <Text style={styles.pickerButtonText}>
+            {language.name.toUpperCase()} ▼
+          </Text>
+        </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={showPicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowPicker(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowPicker(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Language</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowPicker(false)}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={selectedIndex}
+                onValueChange={(itemValue) => {
+                  handleLanguage(itemValue);
+                }}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+              >
+                {languageList.map((lang, index) => (
+                  <Picker.Item
+                    key={index}
+                    label={lang.name.toUpperCase()}
+                    value={index}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
 
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="search for a title"
+          placeholder="search for a movie"
           placeholderTextColor="#999"
           value={query}
           onChangeText={handleTextChange}
@@ -94,10 +132,53 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontStyle: 'italic',
   },
-  pickerContainer: {
+  pickerButton: {
     borderBottomWidth: 3,
     borderBottomColor: '#d62b1e',
-    minWidth: 150,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  pickerButtonText: {
+    color: '#d62b1e',
+    fontSize: 24,
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '50%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  closeButtonText: {
+    fontSize: 20,
+    color: '#d62b1e',
+    fontWeight: 'bold',
+  },
+  pickerWrapper: {
+    height: 200,
   },
   picker: {
     color: '#d62b1e',
