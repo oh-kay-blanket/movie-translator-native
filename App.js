@@ -119,6 +119,7 @@ const languageNames = {
     UA: { SA: 'Арабська', ID: 'Індонезійська', BG: 'Болгарська', CZ: 'Чеська', DK: 'Данська', DE: 'Німецька', US: 'Англійська', ES: 'Іспанська', FR: 'Французька', GR: 'Грецька', IL: 'Іврит', IN: 'Гінді', HU: 'Угорська', IT: 'Італійська', JP: 'Японська', KR: 'Корейська', CN: 'Мандаринська (CN)', TW: 'Мандаринська (TW)', NL: 'Нідерландська', NO: 'Норвезька', IR: 'Перська', PL: 'Польська', BR: 'Португальська (BR)', PT: 'Португальська (PT)', RO: 'Румунська', RU: 'Російська', FI: 'Фінська', SE: 'Шведська', TH: 'Тайська', VN: 'В\'єтнамська', TR: 'Турецька', UA: 'Українська' },
 };
 
+const TMDB_API_KEY = process.env.EXPO_PUBLIC_TMDB_API_KEY;
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w342';
 
 // Default language fallback
@@ -196,7 +197,7 @@ const App = () => {
     } else {
       const searchLanguage = `${sourceLanguage.langCode}-${sourceLanguage.code}`;
       const baseURL =
-        `https://api.themoviedb.org/3/search/movie?api_key=09bef58264dfd94d2a9fc4dcd061da8f&language=${searchLanguage}&query=`;
+        `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=${searchLanguage}&query=`;
       const url = ''.concat(baseURL, query);
       fetch(url)
         .then((response) => response.json())
@@ -217,10 +218,10 @@ const App = () => {
 
           // Use first result
           const movieID = data.results[0].id;
-          const altTitleURL = `https://api.themoviedb.org/3/movie/${movieID}?api_key=09bef58264dfd94d2a9fc4dcd061da8f&append_to_response=translations`;
+          const altTitleURL = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${TMDB_API_KEY}&append_to_response=translations`;
 
           // Fetch images for localized posters
-          const imagesURL = `https://api.themoviedb.org/3/movie/${movieID}/images?api_key=09bef58264dfd94d2a9fc4dcd061da8f&include_image_language=${targetLanguage.langCode},${sourceLanguage.langCode},en,null`;
+          const imagesURL = `https://api.themoviedb.org/3/movie/${movieID}/images?api_key=${TMDB_API_KEY}&include_image_language=${targetLanguage.langCode},${sourceLanguage.langCode},en,null`;
 
           // Get translations array from top hit
           fetch(altTitleURL)
