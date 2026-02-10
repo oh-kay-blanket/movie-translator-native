@@ -394,12 +394,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#dbdbd5',
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 50,
+    paddingBottom: 40,
     gap: 15,
   },
   titleSection: {
     alignItems: 'center',
-    marginTop: 50,
   },
   titleRow: {
     flexDirection: 'row',
