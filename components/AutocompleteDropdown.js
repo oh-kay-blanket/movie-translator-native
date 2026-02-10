@@ -2,6 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -21,10 +22,17 @@ const AutocompleteDropdown = ({ suggestions, onSelect, visible }) => {
             style={styles.item}
             onPress={() => onSelect(item)}
           >
-            <Text style={styles.itemText}>
-              {item.title}
-              {item.year && <Text style={styles.yearText}> ({item.year})</Text>}
-            </Text>
+            {item.poster ? (
+              <Image source={{ uri: item.poster }} style={styles.poster} />
+            ) : (
+              <View style={styles.noPoster} />
+            )}
+            <View style={styles.textContainer}>
+              <Text style={styles.itemText} numberOfLines={2}>
+                {item.title}
+              </Text>
+              {item.year && <Text style={styles.yearText}>{item.year}</Text>}
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -38,25 +46,48 @@ const styles = StyleSheet.create({
     top: '100%',
     left: 0,
     right: 0,
-    backgroundColor: '#dbdbd5',
-    borderWidth: 1,
+    backgroundColor: '#f5f5f5',
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
     borderColor: '#d62b1e',
-    borderTopWidth: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
     zIndex: 1000,
-    maxHeight: 200,
+    maxHeight: 250,
   },
   item: {
-    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
+  poster: {
+    width: 35,
+    height: 52,
+    borderRadius: 4,
+    backgroundColor: '#ddd',
+  },
+  noPoster: {
+    width: 35,
+    height: 52,
+    borderRadius: 4,
+    backgroundColor: '#ddd',
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
+  },
   itemText: {
     color: '#d62b1e',
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '500',
   },
   yearText: {
     color: '#888',
-    fontSize: 14,
+    fontSize: 13,
+    marginTop: 2,
   },
 });
 

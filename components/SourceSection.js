@@ -68,7 +68,7 @@ const SourceSection = ({
 
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, showDropdown && topHits.length > 0 && styles.inputWithDropdown]}
             placeholder={translations.placeholder}
             placeholderTextColor="#999"
             value={query}
@@ -134,21 +134,25 @@ const styles = StyleSheet.create({
   container: {
   },
   containerExpanded: {
-    flex: 1,
+    overflow: 'visible',
   },
   section: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
+    overflow: 'visible',
+    zIndex: 10,
   },
   sectionExpanded: {
-    flex: 1,
+    overflow: 'visible',
   },
   inputContainer: {
     position: 'relative',
     marginTop: 10,
-    marginBottom: 10,
-    zIndex: 1000,
+    marginBottom: 12,
+    paddingBottom: 2,
+    overflow: 'visible',
+    zIndex: 100,
   },
   input: {
     width: '100%',
@@ -160,6 +164,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
     color: '#333',
+  },
+  inputWithDropdown: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomWidth: 0,
   },
   clearButton: {
     position: 'absolute',
@@ -175,7 +184,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   resultRow: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },

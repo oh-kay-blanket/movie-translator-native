@@ -208,10 +208,11 @@ const App = () => {
             return;
           }
 
-          // Setup autocomplete suggestions with year
+          // Setup autocomplete suggestions with year and poster
           setTopHits(data.results.slice(0, 6).map((hit) => ({
             title: hit.title,
             year: hit.release_date ? hit.release_date.substring(0, 4) : '',
+            poster: hit.poster_path ? `${TMDB_IMAGE_BASE}${hit.poster_path}` : null,
           })));
 
           // Use first result
