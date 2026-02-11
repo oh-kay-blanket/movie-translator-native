@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "movie-translator-native",
-    "slug": "movie-translator-native",
+    "name": "Movie Title Translator",
+    "slug": "movie-title-translator",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,17 +10,19 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#dbdbd5"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.plunketk.movietranslator"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#dbdbd5"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.plunketk.movietranslator"
     },
     "web": {
       "favicon": "./assets/favicon.png"
