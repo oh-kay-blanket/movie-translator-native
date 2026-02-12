@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     top: '100%',
+    marginTop: -10,
     left: 0,
     right: 0,
     backgroundColor: '#f5f5f5',
@@ -53,6 +54,7 @@ const styles = StyleSheet.create({
     borderColor: '#d62b1e',
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
+    paddingTop: 8,
     zIndex: 1000,
     maxHeight: 250,
   },

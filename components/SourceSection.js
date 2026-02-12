@@ -68,7 +68,7 @@ const SourceSection = ({
 
         <View style={styles.inputContainer}>
           <TextInput
-            style={[styles.input, showDropdown && topHits.length > 0 && styles.inputWithDropdown]}
+            style={styles.input}
             placeholder={translations.placeholder}
             placeholderTextColor="#999"
             value={query}
