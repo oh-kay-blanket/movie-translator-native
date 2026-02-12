@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
+import { AlfaSlabOne_400Regular } from '@expo-google-fonts/alfa-slab-one';
+import { Montserrat_900Black } from '@expo-google-fonts/montserrat';
 import * as Localization from 'expo-localization';
 import SourceSection from './components/SourceSection';
 import ResultSection from './components/ResultSection';
@@ -126,6 +128,11 @@ const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w342';
 // Default language fallback
 const defaultLanguage = { name: 'English', engName: 'English', code: 'US', langCode: 'en' };
 
+// Languages that use Latin script (Alfa Slab One supports these)
+const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
+
+const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
+
 // Get initial language based on device locale
 const getDeviceLanguage = () => {
   const locales = Localization.getLocales();
@@ -151,6 +158,8 @@ const getDeviceLanguage = () => {
 const App = () => {
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
+    AlfaSlabOne_400Regular,
+    Montserrat_900Black,
   });
   const [loading, setLoading] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState(getDeviceLanguage);
@@ -370,7 +379,7 @@ const App = () => {
               <Logo size={90} color="#d62b1e" />
               <View style={styles.titleText}>
                 <Text
-                  style={styles.mainTitle}
+                  style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
                   numberOfLines={1}
                   adjustsFontSizeToFit
                   minimumFontScale={0.5}
@@ -378,7 +387,7 @@ const App = () => {
                   {currentTranslation.title[0]}
                 </Text>
                 <Text
-                  style={styles.mainTitle}
+                  style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
                   numberOfLines={1}
                   adjustsFontSizeToFit
                   minimumFontScale={0.5}
@@ -456,11 +465,17 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   mainTitle: {
-    fontFamily: 'BebasNeue_400Regular',
     color: '#d62b1e',
-    fontSize: 38,
-    lineHeight: 40,
-    letterSpacing: 3,
+    fontSize: 28,
+    lineHeight: 32,
+  },
+  titleFontPrimary: {
+    fontFamily: 'AlfaSlabOne_400Regular',
+    letterSpacing: 0,
+  },
+  titleFontFallback: {
+    fontFamily: 'Montserrat_900Black',
+    letterSpacing: 1,
   },
 });
 
