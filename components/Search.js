@@ -47,7 +47,7 @@ const Search = ({
           onPress={() => setShowPicker(true)}
         >
           <Text style={styles.pickerButtonText}>
-            {language.name.toUpperCase()} ▼
+            {language.name} ▼
           </Text>
         </TouchableOpacity>
       </View>
@@ -84,7 +84,7 @@ const Search = ({
                 {languageList.map((lang, index) => (
                   <Picker.Item
                     key={index}
-                    label={lang.name.toUpperCase()}
+                    label={lang.name}
                     value={index}
                   />
                 ))}
