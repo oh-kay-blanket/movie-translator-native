@@ -88,7 +88,7 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
         onPress={openPicker}
       >
         <Text style={styles.pickerButtonText}>
-          {(showTranslatedName && languageNames ? languageNames[language.code] : language.name).toUpperCase()} ▼
+          {showTranslatedName && languageNames ? languageNames[language.code] : language.name} ▼
         </Text>
       </TouchableOpacity>
 

@@ -32,7 +32,8 @@ const Logo = ({ size = 80, color = '#d62b1e', bgColor = '#dbdbd5' }) => (
       x="32"
       y="25"
       fontSize="20"
-      fontFamily="BebasNeue_400Regular"
+      fontFamily="Arial, sans-serif"
+      fontWeight="bold"
       fill={color}
       textAnchor="middle"
     >
@@ -44,6 +45,7 @@ const Logo = ({ size = 80, color = '#d62b1e', bgColor = '#dbdbd5' }) => (
       x="32"
       y="53"
       fontSize="18"
+      fontFamily="Arial, sans-serif"
       fontWeight="bold"
       fill={color}
       textAnchor="middle"
