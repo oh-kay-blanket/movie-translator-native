@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
-    zIndex: 1,
   },
   sectionExpanded: {
     flex: 1,

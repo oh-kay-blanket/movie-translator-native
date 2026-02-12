@@ -8,53 +8,55 @@ import {
   Pressable,
   ScrollView,
   Animated,
-  Dimensions,
 } from 'react-native';
 
-const { height: screenHeight } = Dimensions.get('window');
 
-const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange }) => {
+const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange, showTranslatedName = false }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+  const slideAnim = useRef(new Animated.Value(1)).current; // 1 = off screen, 0 = visible
 
-  useEffect(() => {
-    if (showPicker) {
-      setModalVisible(true);
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: screenHeight,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setModalVisible(false);
-      });
-    }
-  }, [showPicker, fadeAnim, slideAnim]);
+  const openPicker = () => {
+    fadeAnim.setValue(0);
+    slideAnim.setValue(1);
+    setModalVisible(true);
+    setShowPicker(true);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closePicker = () => {
+    setShowPicker(false);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setModalVisible(false);
+    });
+  };
 
   const handleSelect = (index) => {
     onLanguageChange(index);
-    setShowPicker(false);
+    closePicker();
   };
 
   // Find the device language in the list and its index
@@ -82,10 +84,10 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.pickerButton}
-        onPress={() => setShowPicker(true)}
+        onPress={openPicker}
       >
         <Text style={styles.pickerButtonText}>
-          {language.name.toUpperCase()} ▼
+          {(showTranslatedName && languageNames ? languageNames[language.code] : language.name).toUpperCase()} ▼
         </Text>
       </TouchableOpacity>
 
@@ -93,18 +95,18 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
         visible={modalVisible}
         transparent={true}
         animationType="none"
-        onRequestClose={() => setShowPicker(false)}
+        onRequestClose={closePicker}
       >
         <View style={styles.modalContainer}>
           <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
-            <Pressable style={styles.overlayPressable} onPress={() => setShowPicker(false)} />
+            <Pressable style={styles.overlayPressable} onPress={closePicker} />
           </Animated.View>
-          <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim }] }]}>
+          <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 600] }) }] }]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{selectLanguageText || 'Select Language'}</Text>
               <TouchableOpacity
                 style={styles.closeButton}
-                onPress={() => setShowPicker(false)}
+                onPress={closePicker}
               >
                 <Text style={styles.closeButtonText}>✕</Text>
               </TouchableOpacity>
@@ -128,11 +130,11 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
                         language.code === lang.code && styles.listItemTextSelected,
                       ]}
                     >
-                      {lang.name}
+                      {showTranslatedName && languageNames ? languageNames[lang.code] : lang.name}
                     </Text>
                     {languageNames && languageNames[lang.code] !== lang.name && (
                       <Text style={styles.listItemSubtext}>
-                        {languageNames[lang.code]}
+                        {showTranslatedName ? lang.name : languageNames[lang.code]}
                       </Text>
                     )}
                   </TouchableOpacity>
