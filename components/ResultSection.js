@@ -54,6 +54,7 @@ const ResultSection = ({
           languageNames={languageNames}
           selectLanguageText={translations.selectLanguage}
           onLanguageChange={onLanguageChange}
+          showTranslatedName={true}
         />
 
         {(translatedTitle || loading) && (
