@@ -149,7 +149,6 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    zIndex: 10,
   },
   pickerButton: {
     paddingVertical: 5,

@@ -134,25 +134,19 @@ const styles = StyleSheet.create({
   container: {
   },
   containerExpanded: {
-    overflow: 'visible',
   },
   section: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
-    overflow: 'visible',
-    zIndex: 10,
   },
   sectionExpanded: {
-    overflow: 'visible',
   },
   inputContainer: {
     position: 'relative',
     marginTop: 10,
     marginBottom: 12,
     paddingBottom: 2,
-    overflow: 'visible',
-    zIndex: 100,
   },
   input: {
     width: '100%',
