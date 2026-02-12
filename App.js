@@ -177,6 +177,7 @@ const App = () => {
     const newLanguage = languageList[index];
     logLanguageChanged('source', sourceLanguage.code, newLanguage.code);
     setSourceLanguage(newLanguage);
+    setQuery('');
   };
 
   const handleTargetLanguage = (index) => {
