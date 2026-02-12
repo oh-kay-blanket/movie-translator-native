@@ -29,6 +29,8 @@ const ResultSection = ({
   languageNames,
   translatedTitle,
   translatedPoster,
+  allTranslations,
+  allPosters,
   loading,
   translations,
   onLanguageChange,
@@ -55,6 +57,8 @@ const ResultSection = ({
           selectLanguageText={translations.selectLanguage}
           onLanguageChange={onLanguageChange}
           showTranslatedName={true}
+          allTranslations={allTranslations}
+          allPosters={allPosters}
         />
 
         {(translatedTitle || loading) && (

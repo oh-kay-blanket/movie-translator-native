@@ -8,10 +8,11 @@ import {
   Pressable,
   ScrollView,
   Animated,
+  Image,
 } from 'react-native';
 
 
-const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange, showTranslatedName = false }) => {
+const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange, showTranslatedName = false, allTranslations = {}, allPosters = {} }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -114,6 +115,9 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
             <ScrollView style={styles.listContainer}>
               {reorderedList.map((lang, index) => {
                 const isDeviceLanguage = deviceLanguage && lang.code === deviceLanguage.code;
+                const hasTranslations = Object.keys(allTranslations).length > 0;
+                const translatedTitle = allTranslations[lang.code] || (lang.langCode === 'en' ? allTranslations['_default'] : null);
+                const poster = allPosters[lang.langCode];
                 return (
                   <TouchableOpacity
                     key={lang.code}
@@ -124,19 +128,35 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
                     ]}
                     onPress={() => handleSelect(getOriginalIndex(index))}
                   >
-                    <Text
-                      style={[
-                        styles.listItemText,
-                        language.code === lang.code && styles.listItemTextSelected,
-                      ]}
-                    >
-                      {showTranslatedName && languageNames ? languageNames[lang.code] : lang.name}
-                    </Text>
-                    {languageNames && languageNames[lang.code] !== lang.name && (
-                      <Text style={styles.listItemSubtext}>
-                        {showTranslatedName ? lang.name : languageNames[lang.code]}
-                      </Text>
-                    )}
+                    <View style={styles.listItemContent}>
+                      <View style={styles.listItemTextContainer}>
+                        <Text
+                          style={[
+                            styles.listItemText,
+                            language.code === lang.code && styles.listItemTextSelected,
+                          ]}
+                        >
+                          {showTranslatedName && languageNames ? languageNames[lang.code] : lang.name}
+                        </Text>
+                        {languageNames && languageNames[lang.code] !== lang.name && (
+                          <Text style={styles.listItemSubtext}>
+                            {showTranslatedName ? lang.name : languageNames[lang.code]}
+                          </Text>
+                        )}
+                      </View>
+                      {hasTranslations && (
+                        <View style={styles.previewContainer}>
+                          {poster ? (
+                            <Image source={{ uri: poster }} style={styles.previewPoster} />
+                          ) : (
+                            <View style={[styles.previewPoster, styles.previewPosterEmpty]} />
+                          )}
+                          <Text style={[styles.previewTitle, !translatedTitle && styles.previewTitleEmpty]} numberOfLines={2}>
+                            {translatedTitle || '—'}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   </TouchableOpacity>
                 );
               })}
@@ -204,10 +224,19 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   listItem: {
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  listItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  listItemTextContainer: {
+    flex: 1,
+    marginRight: 10,
   },
   listItemDefault: {
     backgroundColor: '#f9f9f9',
@@ -229,6 +258,29 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666',
     marginTop: 2,
+  },
+  previewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: '50%',
+  },
+  previewPoster: {
+    width: 30,
+    height: 45,
+    borderRadius: 3,
+    backgroundColor: '#ddd',
+  },
+  previewPosterEmpty: {
+    backgroundColor: '#eee',
+  },
+  previewTitle: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 12,
+    color: '#666',
+  },
+  previewTitleEmpty: {
+    color: '#bbb',
   },
 });
 

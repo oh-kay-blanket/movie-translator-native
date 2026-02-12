@@ -169,6 +169,8 @@ const App = () => {
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [originalPoster, setOriginalPoster] = useState(null);
   const [translatedPoster, setTranslatedPoster] = useState(null);
+  const [allTranslations, setAllTranslations] = useState({});
+  const [allPosters, setAllPosters] = useState({});
 
   const currentTranslation = translations[sourceLanguage.code] || translations.US;
   const deviceLanguage = getDeviceLanguage();
@@ -207,6 +209,8 @@ const App = () => {
       setTranslatedTitle('');
       setOriginalPoster(null);
       setTranslatedPoster(null);
+      setAllTranslations({});
+      setAllPosters({});
     } else {
       const searchLanguage = `${sourceLanguage.langCode}-${sourceLanguage.code}`;
       const baseURL =
@@ -233,8 +237,8 @@ const App = () => {
           const movieID = data.results[0].id;
           const altTitleURL = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${TMDB_API_KEY}&append_to_response=translations`;
 
-          // Fetch images for localized posters
-          const imagesURL = `https://api.themoviedb.org/3/movie/${movieID}/images?api_key=${TMDB_API_KEY}&include_image_language=${targetLanguage.langCode},${sourceLanguage.langCode},en,null`;
+          // Fetch images for localized posters (get all languages)
+          const imagesURL = `https://api.themoviedb.org/3/movie/${movieID}/images?api_key=${TMDB_API_KEY}`;
 
           // Get translations array from top hit
           fetch(altTitleURL)
@@ -244,12 +248,23 @@ const App = () => {
               fetch(imagesURL)
                 .then((imagesResponse) => imagesResponse.json())
                 .then((imagesData) => {
+                  // Build map of all posters by language code
+                  const postersMap = {};
+                  imagesData.posters?.forEach((poster) => {
+                    if (poster.iso_639_1 && !postersMap[poster.iso_639_1]) {
+                      postersMap[poster.iso_639_1] = `${TMDB_IMAGE_BASE}${poster.file_path}`;
+                    }
+                  });
+                  // Add default poster as 'en' fallback if not present
+                  if (altTitleData.poster_path && !postersMap['en']) {
+                    postersMap['en'] = `${TMDB_IMAGE_BASE}${altTitleData.poster_path}`;
+                  }
+                  setAllPosters(postersMap);
+
                   // Look for poster in source language
-                  const sourcePoster = imagesData.posters?.find(
-                    (poster) => poster.iso_639_1 === sourceLanguage.langCode
-                  );
+                  const sourcePoster = postersMap[sourceLanguage.langCode];
                   if (sourcePoster) {
-                    setOriginalPoster(`${TMDB_IMAGE_BASE}${sourcePoster.file_path}`);
+                    setOriginalPoster(sourcePoster);
                   } else if (altTitleData.poster_path) {
                     // Fall back to default poster
                     setOriginalPoster(`${TMDB_IMAGE_BASE}${altTitleData.poster_path}`);
@@ -258,11 +273,9 @@ const App = () => {
                   }
 
                   // Look for poster in target language
-                  const targetPoster = imagesData.posters?.find(
-                    (poster) => poster.iso_639_1 === targetLanguage.langCode
-                  );
+                  const targetPoster = postersMap[targetLanguage.langCode];
                   if (targetPoster) {
-                    setTranslatedPoster(`${TMDB_IMAGE_BASE}${targetPoster.file_path}`);
+                    setTranslatedPoster(targetPoster);
                   } else if (targetLanguage.langCode === 'en' && altTitleData.poster_path) {
                     // For English, fall back to default poster (usually English)
                     setTranslatedPoster(`${TMDB_IMAGE_BASE}${altTitleData.poster_path}`);
@@ -282,6 +295,19 @@ const App = () => {
 
               // Set year from movie data
               setOriginalYear(altTitleData.release_date ? altTitleData.release_date.substring(0, 4) : '');
+
+              // Build map of all translations by country code
+              const translationsMap = {};
+              altTitleData.translations.translations.forEach((t) => {
+                if (t.data.title) {
+                  translationsMap[t.iso_3166_1] = t.data.title;
+                }
+              });
+              // Add default title as English fallback
+              if (altTitleData.title) {
+                translationsMap['_default'] = altTitleData.title;
+              }
+              setAllTranslations(translationsMap);
 
               // Find source language translation for title
               const sourceTranslation = altTitleData.translations.translations.find(
@@ -387,6 +413,8 @@ const App = () => {
             languageNames={languageNames[sourceLanguage.code] || languageNames.US}
             translatedTitle={translatedTitle}
             translatedPoster={translatedPoster}
+            allTranslations={allTranslations}
+            allPosters={allPosters}
             loading={loading}
             translations={currentTranslation}
             onLanguageChange={(index) => {
