@@ -48,6 +48,7 @@ const SourceSection = ({
   };
 
   const handleClear = () => {
+    Keyboard.dismiss();
     onInput('');
     setShowDropdown(false);
   };
@@ -79,9 +80,13 @@ const SourceSection = ({
             autoCapitalize="none"
           />
           {query.length > 0 && (
-            <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
+            <Pressable
+              style={styles.clearButton}
+              onPress={handleClear}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
               <Text style={styles.clearButtonText}>✕</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           <AutocompleteDropdown
             suggestions={topHits}
@@ -172,6 +177,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     paddingHorizontal: 5,
+    zIndex: 10,
   },
   clearButtonText: {
     color: '#999',
