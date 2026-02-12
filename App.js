@@ -12,6 +12,7 @@ import * as Localization from 'expo-localization';
 import SourceSection from './components/SourceSection';
 import ResultSection from './components/ResultSection';
 import Logo from './components/Logo';
+import { logSearch, logTranslationViewed, logLanguageChanged } from './utils/analytics';
 
 const languageList = [
     { name: 'العربية', engName: 'Arabic', code: 'SA', langCode: 'ar' },
@@ -173,17 +174,28 @@ const App = () => {
   const deviceLanguage = getDeviceLanguage();
 
   const handleSourceLanguage = (index) => {
-    setSourceLanguage(languageList[index]);
+    const newLanguage = languageList[index];
+    logLanguageChanged('source', sourceLanguage.code, newLanguage.code);
+    setSourceLanguage(newLanguage);
   };
 
   const handleTargetLanguage = (index) => {
-    setTargetLanguage(languageList[index]);
+    const newLanguage = languageList[index];
+    logLanguageChanged('target', targetLanguage.code, newLanguage.code);
+    setTargetLanguage(newLanguage);
   };
 
   const handleInput = (text) => {
     setLoading(true);
     setQuery(text);
   };
+
+  // Log search when query changes (debounced by parent)
+  useEffect(() => {
+    if (query && query.length > 0) {
+      logSearch(query, sourceLanguage.code);
+    }
+  }, [query, sourceLanguage.code]);
 
   // MOVIEDB API
   useEffect(() => {
@@ -288,11 +300,14 @@ const App = () => {
 
               if (translation && translation.data.title) {
                 setTranslatedTitle(translation.data.title);
+                logTranslationViewed(translation.data.title, sourceLanguage.code, targetLanguage.code, true);
               } else if (targetLanguage.langCode === 'en') {
                 // For English, fall back to default title (usually English)
                 setTranslatedTitle(altTitleData.title);
+                logTranslationViewed(altTitleData.title, sourceLanguage.code, targetLanguage.code, true);
               } else {
                 setTranslatedTitle(currentTranslation.noTitleFound);
+                logTranslationViewed(altTitleData.original_title || query, sourceLanguage.code, targetLanguage.code, false);
               }
               setLoading(false);
             })
@@ -394,8 +409,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#dbdbd5',
     paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 40,
+    paddingTop: 80,
+    paddingBottom: 50,
     gap: 15,
   },
   titleSection: {

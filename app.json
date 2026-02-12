@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Movie Title Translator",
-    "slug": "movie-title-translator",
+    "slug": "movie-translator-native",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,14 +22,16 @@
         "backgroundColor": "#dbdbd5"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.plunketk.movietranslator"
+      "package": "com.plunketk.movietranslator",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font",
-      "expo-localization"
+      "expo-localization",
+      "@react-native-firebase/app"
     ],
     "extra": {
       "eas": {
