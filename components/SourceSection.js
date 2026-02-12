@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
   container: {
   },
   containerExpanded: {
+    // flex: 1,
   },
   section: {
     backgroundColor: '#fff',
@@ -180,6 +181,7 @@ const styles = StyleSheet.create({
   resultRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginVertical: 20
   },
   poster: {
     width: POSTER_WIDTH,

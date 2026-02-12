@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   container: {
   },
   containerExpanded: {
-    flex: 1,
+    flex: 1
   },
   section: {
     backgroundColor: '#fff',
