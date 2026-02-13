@@ -1,9 +1,9 @@
-<svg width="1024" height="1024" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="1024" height="1024" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background (will be handled by backgroundColor in app.json, but included for preview) -->
-  <rect width="108" height="108" fill="#dbdbd5"/>
+  <rect width="128" height="128" fill="#dbdbd5"/>
 
-  <!-- Film strip - centered with padding for adaptive icon safe zone -->
-  <g transform="translate(22, 22)">
+  <!-- Film strip - centered with more padding for adaptive icon safe zone -->
+  <g transform="translate(32, 32)">
     <!-- Film strip outline -->
     <rect x="4" y="4" width="56" height="56" rx="4" stroke="#d62b1e" stroke-width="3" fill="none"/>
 
