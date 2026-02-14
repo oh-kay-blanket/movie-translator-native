@@ -170,14 +170,14 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   pickerButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
   pickerButtonText: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 20,
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontWeight: 'bold',
   },
   listContainer: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   listItemTextSelected: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontWeight: 'bold',
   },
   listItemSubtext: {

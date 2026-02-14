@@ -8,7 +8,10 @@ import * as Speech from 'expo-speech';
 import Svg, { Path } from 'react-native-svg';
 import LanguagePicker from './LanguagePicker';
 
-const SpeakerIcon = ({ size = 24, color = '#d62b1e' }) => (
+const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
+const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
+
+const SpeakerIcon = ({ size = 24, color = '#4a3f38' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
       d="M11 5L6 9H2v6h4l5 4V5z"
@@ -34,6 +37,7 @@ const ResultSection = ({
   loading,
   translations,
   onLanguageChange,
+  frameHeight,
 }) => {
   const [showPosterModal, setShowPosterModal] = useState(false);
 
@@ -48,8 +52,7 @@ const ResultSection = ({
   const hasContent = translatedTitle || loading;
 
   return (
-    <View style={[styles.container, hasContent && styles.containerExpanded]}>
-      <View style={[styles.section, hasContent && styles.sectionExpanded]}>
+    <View style={styles.container}>
         <LanguagePicker
           language={language}
           languageList={languageList}
@@ -75,12 +78,16 @@ const ResultSection = ({
 
             <View style={styles.titleContainer}>
               <View style={styles.titleRow}>
-                <Text style={styles.title}>
+                <Text style={[
+                  styles.title,
+                  usesLatinScript(language.code) ? styles.titleFontPrimary : styles.titleFontFallback,
+                  translatedTitle?.includes(translations.noTitleFound) && styles.titleMuted
+                ]}>
                   {loading ? translations.searching : translatedTitle}
                 </Text>
                 {!loading && translatedTitle && !translatedTitle.includes(translations.noTitleFound) && (
                   <TouchableOpacity style={styles.speakButton} onPress={handleSpeak}>
-                    <SpeakerIcon size={24} color="#d62b1e" />
+                    <SpeakerIcon size={24} color="#4a3f38" />
                   </TouchableOpacity>
                 )}
               </View>
@@ -88,42 +95,31 @@ const ResultSection = ({
           </View>
         )}
 
-        {translatedPoster && (
-          <Modal
-            visible={showPosterModal}
-            transparent={true}
-            animationType="fade"
-            onRequestClose={() => setShowPosterModal(false)}
+      {translatedPoster && (
+        <Modal
+          visible={showPosterModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowPosterModal(false)}
+        >
+          <Pressable
+            style={styles.posterModalOverlay}
+            onPress={() => setShowPosterModal(false)}
           >
-            <Pressable
-              style={styles.posterModalOverlay}
-              onPress={() => setShowPosterModal(false)}
-            >
-              <Image
-                source={{ uri: translatedPoster }}
-                style={styles.posterLarge}
-                resizeMode="contain"
-              />
-            </Pressable>
-          </Modal>
-        )}
-      </View>
+            <Image
+              source={{ uri: translatedPoster }}
+              style={styles.posterLarge}
+              resizeMode="contain"
+            />
+          </Pressable>
+        </Modal>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-  },
-  containerExpanded: {
-    flex: 1
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-  },
-  sectionExpanded: {
     flex: 1,
   },
   resultRow: {
@@ -142,7 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#d62b1e',
+    borderColor: '#4a3f38',
     borderStyle: 'dashed',
     backgroundColor: '#f5f5f5',
   },
@@ -163,9 +159,17 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#333',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
     flexShrink: 1,
+  },
+  titleFontPrimary: {
+    fontFamily: 'AlfaSlabOne_400Regular',
+  },
+  titleFontFallback: {
+    fontFamily: 'Montserrat_900Black',
+  },
+  titleMuted: {
+    color: '#999',
   },
   speakButton: {
     marginLeft: 10,

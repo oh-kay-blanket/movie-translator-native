@@ -18,6 +18,9 @@ const POSTER_HEIGHT = POSTER_WIDTH * 1.5;
 import LanguagePicker from './LanguagePicker';
 import AutocompleteDropdown from './AutocompleteDropdown';
 
+const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
+const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
+
 const SourceSection = ({
   language,
   languageList,
@@ -32,6 +35,7 @@ const SourceSection = ({
   translations,
   onLanguageChange,
   onInput,
+  frameHeight,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPosterModal, setShowPosterModal] = useState(false);
@@ -56,22 +60,22 @@ const SourceSection = ({
   const hasContent = originalPoster || originalTitle;
 
   return (
-    <View style={[styles.container, hasContent && styles.containerExpanded]}>
-      <View style={[styles.section, hasContent && styles.sectionExpanded]}>
-        <LanguagePicker
-          language={language}
-          languageList={languageList}
-          languageNames={languageNames}
-          deviceLanguage={deviceLanguage}
-          selectLanguageText={translations.selectLanguage}
-          onLanguageChange={onLanguageChange}
-        />
+    <View style={styles.container}>
+        <View style={styles.searchRow}>
+          <LanguagePicker
+            language={language}
+            languageList={languageList}
+            languageNames={languageNames}
+            deviceLanguage={deviceLanguage}
+            selectLanguageText={translations.selectLanguage}
+            onLanguageChange={onLanguageChange}
+          />
 
-        <View style={styles.inputContainer}>
+          <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             placeholder={translations.placeholder}
-            placeholderTextColor="#999"
+            placeholderTextColor="#666"
             value={query}
             onChangeText={handleTextChange}
             onFocus={() => setShowDropdown(query.length > 0)}
@@ -93,72 +97,69 @@ const SourceSection = ({
             onSelect={handleSuggestionSelect}
             visible={showDropdown}
           />
+          </View>
         </View>
 
-        {(originalPoster || originalTitle) && (
-          <View style={styles.resultRow}>
-            {originalPoster && (
-              <TouchableOpacity onPress={() => setShowPosterModal(true)}>
-                <Image source={{ uri: originalPoster }} style={styles.poster} />
-              </TouchableOpacity>
-            )}
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>
-                {loading ? translations.searching : originalTitle}
-              </Text>
-              {!loading && originalYear && (
-                <Text style={styles.year}>({originalYear})</Text>
+        <View style={styles.resultWrapper}>
+          {(originalPoster || originalTitle) && (
+            <View style={styles.resultRow}>
+              {originalPoster && (
+                <TouchableOpacity onPress={() => setShowPosterModal(true)}>
+                  <Image source={{ uri: originalPoster }} style={styles.poster} />
+                </TouchableOpacity>
               )}
+              <View style={styles.titleContainer}>
+                <Text style={[styles.title, usesLatinScript(language.code) ? styles.titleFontPrimary : styles.titleFontFallback]}>
+                  {loading ? translations.searching : originalTitle}
+                </Text>
+                {!loading && originalYear && (
+                  <Text style={styles.year}>({originalYear})</Text>
+                )}
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </View>
 
-        <Modal
-          visible={showPosterModal}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setShowPosterModal(false)}
+      <Modal
+        visible={showPosterModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowPosterModal(false)}
+      >
+        <Pressable
+          style={styles.posterModalOverlay}
+          onPress={() => setShowPosterModal(false)}
         >
-          <Pressable
-            style={styles.posterModalOverlay}
-            onPress={() => setShowPosterModal(false)}
-          >
-            <Image
-              source={{ uri: originalPoster }}
-              style={styles.posterLarge}
-              resizeMode="contain"
-            />
-          </Pressable>
-        </Modal>
-      </View>
+          <Image
+            source={{ uri: originalPoster }}
+            style={styles.posterLarge}
+            resizeMode="contain"
+          />
+        </Pressable>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
   },
-  containerExpanded: {
-    // flex: 1,
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-  },
-  sectionExpanded: {
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   inputContainer: {
+    flex: 1,
     position: 'relative',
-    marginTop: 10,
-    marginBottom: 12,
+    marginLeft: 10,
     paddingBottom: 2,
   },
   input: {
     width: '100%',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#e8c4a8',
     borderWidth: 2,
-    borderColor: '#d62b1e',
+    borderColor: '#4a3f38',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 10,
@@ -184,10 +185,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  resultWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   resultRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20
   },
   poster: {
     width: POSTER_WIDTH,
@@ -201,8 +205,13 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#333',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+  },
+  titleFontPrimary: {
+    fontFamily: 'AlfaSlabOne_400Regular',
+  },
+  titleFontFallback: {
+    fontFamily: 'Montserrat_900Black',
   },
   year: {
     color: '#666',

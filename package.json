@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start -c",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build-preview": "npx eas build --platform android --profile preview",
+    "build-prod": "npx eas build --platform android --profile preview"
   },
   "dependencies": {
     "@expo-google-fonts/alfa-slab-one": "^0.4.1",

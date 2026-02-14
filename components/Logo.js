@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Path, Rect, Text as SvgText, Line } from 'react-native-svg';
 
-const Logo = ({ size = 80, color = '#d62b1e', bgColor = '#dbdbd5' }) => (
+const Logo = ({ size = 80, color = '#4a3f38', bgColor = '#e8c4a8' }) => (
   <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
     {/* Film strip */}
     <Rect x="4" y="4" width="56" height="56" rx="4" stroke={color} strokeWidth="3" fill="none" />

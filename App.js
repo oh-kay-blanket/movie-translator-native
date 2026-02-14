@@ -5,16 +5,28 @@ import {
   Text,
   SafeAreaView,
   ActivityIndicator,
+  useWindowDimensions,
+  Modal,
+  TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
 import { AlfaSlabOne_400Regular } from '@expo-google-fonts/alfa-slab-one';
 import { Montserrat_900Black } from '@expo-google-fonts/montserrat';
 import * as Localization from 'expo-localization';
+import Svg, { Circle, Path } from 'react-native-svg';
 import SourceSection from './components/SourceSection';
 import ResultSection from './components/ResultSection';
 import Logo from './components/Logo';
 import { logSearch, logTranslationViewed, logLanguageChanged } from './utils/analytics';
+
+const InfoIcon = ({ size = 24, color = '#4a3f38' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth={2} />
+    <Path d="M12 16v-4M12 8h.01" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);
 
 const languageList = [
     { name: 'العربية', engName: 'Arabic', code: 'SA', langCode: 'ar' },
@@ -155,13 +167,18 @@ const getDeviceLanguage = () => {
   return defaultLanguage;
 };
 
+const FRAME_GAP = 12;
+const SAFE_AREA_TOP = 50;
+
 const App = () => {
+  const { height: screenHeight } = useWindowDimensions();
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
     AlfaSlabOne_400Regular,
     Montserrat_900Black,
   });
   const [loading, setLoading] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState(getDeviceLanguage);
   const [targetLanguage, setTargetLanguage] = useState(() => {
     // Set a different default target language than source
@@ -180,6 +197,10 @@ const App = () => {
   const [translatedPoster, setTranslatedPoster] = useState(null);
   const [allTranslations, setAllTranslations] = useState({});
   const [allPosters, setAllPosters] = useState({});
+
+  // Calculate frame height for film strip effect
+  const VISIBLE_FRAMES = 2.2;
+  const FRAME_HEIGHT = (screenHeight - SAFE_AREA_TOP) / (VISIBLE_FRAMES + 0.5);
 
   const currentTranslation = translations[sourceLanguage.code] || translations.US;
   const deviceLanguage = getDeviceLanguage();
@@ -364,19 +385,45 @@ const App = () => {
   if (!fontsLoaded) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ActivityIndicator size="large" color="#d62b1e" />
+        <ActivityIndicator size="large" color="#4a3f38" />
       </SafeAreaView>
     );
   }
 
+  const frameStyle = {
+    height: FRAME_HEIGHT,
+    backgroundColor: '#f8e0cc',
+    borderRadius: 12,
+    marginHorizontal: 20,
+    marginBottom: FRAME_GAP,
+    padding: 15,
+    overflow: 'hidden',
+  };
+
+  // Generate perforation positions
+  const perforationCount = Math.floor(screenHeight / 40);
+  const perforations = Array.from({ length: perforationCount }, (_, i) => i);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
+      {/* Left perforations */}
+      <View style={styles.perforationStrip} pointerEvents="none">
+        {perforations.map((i) => (
+          <View key={`left-${i}`} style={styles.perforation} />
+        ))}
+      </View>
+      {/* Right perforations */}
+      <View style={[styles.perforationStrip, styles.perforationStripRight]} pointerEvents="none">
+        {perforations.map((i) => (
+          <View key={`right-${i}`} style={styles.perforation} />
+        ))}
+      </View>
       <View style={styles.container}>
-          {/* Title Section */}
-          <View style={styles.titleSection}>
+          {/* Header Frame - partially off-screen at top */}
+          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * 0.5 }]}>
             <View style={styles.titleRow}>
-              <Logo size={90} color="#d62b1e" />
+              <Logo size={90} color="#4a3f38" />
               <View style={styles.titleText}>
                 <Text
                   style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
@@ -398,41 +445,72 @@ const App = () => {
             </View>
           </View>
 
-          {/* Source Section */}
-          <SourceSection
-            language={sourceLanguage}
-            languageList={languageList}
-            languageNames={languageNames[sourceLanguage.code] || languageNames.US}
-            deviceLanguage={deviceLanguage}
-            query={query}
-            topHits={topHits}
-            originalTitle={originalTitle}
-            originalYear={originalYear}
-            originalPoster={originalPoster}
-            loading={loading}
-            translations={currentTranslation}
-            onLanguageChange={handleSourceLanguage}
-            onInput={handleInput}
-          />
+          {/* Source Frame */}
+          <View style={frameStyle}>
+            <SourceSection
+              language={sourceLanguage}
+              languageList={languageList}
+              languageNames={languageNames[sourceLanguage.code] || languageNames.US}
+              deviceLanguage={deviceLanguage}
+              query={query}
+              topHits={topHits}
+              originalTitle={originalTitle}
+              originalYear={originalYear}
+              originalPoster={originalPoster}
+              loading={loading}
+              translations={currentTranslation}
+              onLanguageChange={handleSourceLanguage}
+              onInput={handleInput}
+              frameHeight={FRAME_HEIGHT}
+            />
+          </View>
 
-          {/* Result Section */}
-          <ResultSection
-            language={targetLanguage}
-            languageList={languageList.filter(lang => lang.code !== sourceLanguage.code)}
-            languageNames={languageNames[sourceLanguage.code] || languageNames.US}
-            translatedTitle={translatedTitle}
-            translatedPoster={translatedPoster}
-            allTranslations={allTranslations}
-            allPosters={allPosters}
-            loading={loading}
-            translations={currentTranslation}
-            onLanguageChange={(index) => {
-              const filteredList = languageList.filter(lang => lang.code !== sourceLanguage.code);
-              const selectedLang = filteredList[index];
-              const originalIndex = languageList.findIndex(lang => lang.code === selectedLang.code);
-              handleTargetLanguage(originalIndex);
-            }}
-          />
+          {/* Result Frame */}
+          <View style={frameStyle}>
+            <ResultSection
+              language={targetLanguage}
+              languageList={languageList.filter(lang => lang.code !== sourceLanguage.code)}
+              languageNames={languageNames[sourceLanguage.code] || languageNames.US}
+              translatedTitle={translatedTitle}
+              translatedPoster={translatedPoster}
+              allTranslations={allTranslations}
+              allPosters={allPosters}
+              loading={loading}
+              translations={currentTranslation}
+              onLanguageChange={(index) => {
+                const filteredList = languageList.filter(lang => lang.code !== sourceLanguage.code);
+                const selectedLang = filteredList[index];
+                const originalIndex = languageList.findIndex(lang => lang.code === selectedLang.code);
+                handleTargetLanguage(originalIndex);
+              }}
+              frameHeight={FRAME_HEIGHT}
+            />
+          </View>
+
+          {/* Footer Frame - partially off-screen at bottom */}
+          <View style={[frameStyle, styles.footerFrame]}>
+            <TouchableOpacity onPress={() => setInfoVisible(true)} style={styles.infoButton}>
+              <InfoIcon size={28} color="#4a3f38" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Info Modal */}
+          <Modal visible={infoVisible} transparent animationType="fade">
+            <Pressable style={styles.modalOverlay} onPress={() => setInfoVisible(false)}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>About Movie Title Translator</Text>
+                <Text style={styles.modalText}>
+                  Discover how movie titles are translated across 30+ languages.
+                </Text>
+                <Text style={styles.modalAttribution}>
+                  This product uses the TMDB API but is not endorsed or certified by TMDB.
+                </Text>
+                <TouchableOpacity onPress={() => setInfoVisible(false)} style={styles.closeButton}>
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
         </View>
     </SafeAreaView>
   );
@@ -441,31 +519,53 @@ const App = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#dbdbd5',
+    backgroundColor: '#e8c4a8',
   },
   container: {
     flex: 1,
-    backgroundColor: '#dbdbd5',
-    paddingHorizontal: 20,
-    paddingTop: 80,
-    paddingBottom: 50,
-    gap: 15,
+    backgroundColor: '#e8c4a8',
   },
-  titleSection: {
+  perforationStrip: {
+    position: 'absolute',
+    left: 4,
+    top: 0,
+    bottom: 0,
+    width: 12,
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    zIndex: 10,
+  },
+  perforationStripRight: {
+    left: undefined,
+    right: 4,
+  },
+  perforation: {
+    width: 8,
+    height: 16,
+    backgroundColor: 'rgba(74, 63, 56, 0.15)',
+    borderRadius: 2,
+  },
+  headerFrame: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingBottom: 20,
+  },
+  footerFrame: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    paddingTop: 15,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 10,
   },
   titleText: {
     flex: 1,
     marginLeft: 12,
   },
   mainTitle: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 28,
     lineHeight: 32,
   },
@@ -476,6 +576,56 @@ const styles = StyleSheet.create({
   titleFontFallback: {
     fontFamily: 'Montserrat_900Black',
     letterSpacing: 1,
+  },
+  infoButton: {
+    padding: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 25,
+    width: '100%',
+    maxWidth: 350,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  modalAttribution: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontStyle: 'italic',
+  },
+  closeButton: {
+    backgroundColor: '#4a3f38',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

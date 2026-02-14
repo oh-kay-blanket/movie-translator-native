@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2,
     borderRightWidth: 2,
     borderBottomWidth: 2,
-    borderColor: '#d62b1e',
+    borderColor: '#4a3f38',
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     paddingTop: 8,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   itemText: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 15,
     fontWeight: '500',
   },

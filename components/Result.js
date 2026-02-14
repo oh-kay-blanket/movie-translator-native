@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#d62b1e',
+    borderColor: '#4a3f38',
     borderStyle: 'dashed',
   },
   noPosterText: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   posterLabel: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 14,
     fontWeight: 'bold',
     marginTop: 8,
@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   label: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 18,
     fontWeight: 'bold',
   },
   title: {
-    color: '#d62b1e',
+    color: '#4a3f38',
     fontSize: 18,
     flexShrink: 1,
   },
