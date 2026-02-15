@@ -3,13 +3,13 @@ import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView,
   ActivityIndicator,
   useWindowDimensions,
   Modal,
   TouchableOpacity,
   Pressable,
 } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
 import { AlfaSlabOne_400Regular } from '@expo-google-fonts/alfa-slab-one';
@@ -168,9 +168,8 @@ const getDeviceLanguage = () => {
 };
 
 const FRAME_GAP = 12;
-const SAFE_AREA_TOP = 50;
 
-const App = () => {
+const AppContent = () => {
   const { height: screenHeight } = useWindowDimensions();
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
@@ -200,7 +199,7 @@ const App = () => {
 
   // Calculate frame height for film strip effect
   const VISIBLE_FRAMES = 2.2;
-  const FRAME_HEIGHT = (screenHeight - SAFE_AREA_TOP) / (VISIBLE_FRAMES + 0.5);
+  const FRAME_HEIGHT = screenHeight / (VISIBLE_FRAMES + 0.7);
 
   const currentTranslation = translations[sourceLanguage.code] || translations.US;
   const deviceLanguage = getDeviceLanguage();
@@ -384,17 +383,17 @@ const App = () => {
 
   if (!fontsLoaded) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.safeArea}>
         <ActivityIndicator size="large" color="#4a3f38" />
-      </SafeAreaView>
+      </View>
     );
   }
 
   const frameStyle = {
     height: FRAME_HEIGHT,
-    backgroundColor: '#f8e0cc',
+    backgroundColor: '#fcebd0',
     borderRadius: 12,
-    marginHorizontal: 20,
+    marginHorizontal: 22,
     marginBottom: FRAME_GAP,
     padding: 15,
     overflow: 'hidden',
@@ -405,7 +404,7 @@ const App = () => {
   const perforations = Array.from({ length: perforationCount }, (_, i) => i);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <StatusBar style="dark" />
       {/* Left perforations */}
       <View style={styles.perforationStrip} pointerEvents="none">
@@ -421,9 +420,9 @@ const App = () => {
       </View>
       <View style={styles.container}>
           {/* Header Frame - partially off-screen at top */}
-          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * 0.5 }]}>
+          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * 0.45 }]}>
             <View style={styles.titleRow}>
-              <Logo size={90} color="#4a3f38" />
+              <Logo size={75} color="#4a3f38" />
               <View style={styles.titleText}>
                 <Text
                   style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
@@ -512,22 +511,22 @@ const App = () => {
             </Pressable>
           </Modal>
         </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#e8c4a8',
+    backgroundColor: '#f2d5ab',
   },
   container: {
     flex: 1,
-    backgroundColor: '#e8c4a8',
+    backgroundColor: '#f2d5ab',
   },
   perforationStrip: {
     position: 'absolute',
-    left: 4,
+    left: 5,
     top: 0,
     bottom: 0,
     width: 12,
@@ -537,7 +536,7 @@ const styles = StyleSheet.create({
   },
   perforationStripRight: {
     left: undefined,
-    right: 4,
+    right: 5,
   },
   perforation: {
     width: 8,
@@ -628,5 +627,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+const App = () => (
+  <SafeAreaProvider>
+    <AppContent />
+  </SafeAreaProvider>
+);
 
 export default App;
