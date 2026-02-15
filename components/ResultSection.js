@@ -32,6 +32,7 @@ const ResultSection = ({
   languageNames,
   translatedTitle,
   translatedPoster,
+  backTranslation,
   allTranslations,
   allPosters,
   loading,
@@ -91,6 +92,11 @@ const ResultSection = ({
                   </TouchableOpacity>
                 )}
               </View>
+              {!loading && backTranslation && (
+                <Text style={styles.backTranslation}>
+                  {backTranslation}
+                </Text>
+              )}
             </View>
           </View>
         )}
@@ -138,12 +144,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#4a3f38',
+    borderColor: 'rgba(74, 63, 56, 0.3)',
     borderStyle: 'dashed',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'transparent',
   },
   noPosterText: {
-    color: '#999',
+    color: 'rgba(74, 63, 56, 0.5)',
     fontSize: 10,
     textAlign: 'center',
     padding: 5,
@@ -170,6 +176,12 @@ const styles = StyleSheet.create({
   },
   titleMuted: {
     color: '#999',
+  },
+  backTranslation: {
+    color: '#777',
+    fontSize: 13,
+    fontStyle: 'italic',
+    marginTop: 4,
   },
   speakButton: {
     marginLeft: 10,

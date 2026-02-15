@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
     left: 0,
     right: -0.75,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f2d5ab',
     borderLeftWidth: 2,
     borderRightWidth: 2,
     borderBottomWidth: 2,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: 'rgba(74, 63, 56, 0.15)',
   },
   poster: {
     width: 35,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     width: 35,
     height: 52,
     borderRadius: 4,
-    backgroundColor: '#ddd',
+    backgroundColor: '#fcebd0',
   },
   textContainer: {
     flex: 1,

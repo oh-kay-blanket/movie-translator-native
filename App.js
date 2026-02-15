@@ -20,6 +20,7 @@ import SourceSection from './components/SourceSection';
 import ResultSection from './components/ResultSection';
 import Logo from './components/Logo';
 import { logSearch, logTranslationViewed, logLanguageChanged } from './utils/analytics';
+import { translateText } from './utils/translationService';
 
 const InfoIcon = ({ size = 24, color = '#4a3f38' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -188,6 +189,7 @@ const AppContent = () => {
     return defaultLanguage;
   });
   const [query, setQuery] = useState('');
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [topHits, setTopHits] = useState([]);
   const [originalTitle, setOriginalTitle] = useState('');
   const [originalYear, setOriginalYear] = useState('');
@@ -196,6 +198,7 @@ const AppContent = () => {
   const [translatedPoster, setTranslatedPoster] = useState(null);
   const [allTranslations, setAllTranslations] = useState({});
   const [allPosters, setAllPosters] = useState({});
+  const [backTranslation, setBackTranslation] = useState(null);
 
   // Calculate frame height for film strip effect
   const VISIBLE_FRAMES = 2.2;
@@ -214,11 +217,13 @@ const AppContent = () => {
   const handleTargetLanguage = (index) => {
     const newLanguage = languageList[index];
     logLanguageChanged('target', targetLanguage.code, newLanguage.code);
+    setBackTranslation(null);
     setTargetLanguage(newLanguage);
   };
 
-  const handleInput = (text) => {
+  const handleInput = (text, movieId = null) => {
     setLoading(true);
+    setSelectedMovieId(movieId);
     setQuery(text);
   };
 
@@ -240,6 +245,7 @@ const AppContent = () => {
       setTranslatedPoster(null);
       setAllTranslations({});
       setAllPosters({});
+      setBackTranslation(null);
     } else {
       const searchLanguage = `${sourceLanguage.langCode}-${sourceLanguage.code}`;
       const baseURL =
@@ -249,21 +255,32 @@ const AppContent = () => {
         .then((response) => response.json())
         .then((data) => {
           if (!data.results || data.results.length === 0) {
-            setOriginalTitle(currentTranslation.noMovieFound);
-            setTranslatedTitle(currentTranslation.noMovieFound);
+            setTopHits([]);
+            // Only show "no movie found" if user explicitly selected something
+            if (selectedMovieId) {
+              setOriginalTitle(currentTranslation.noMovieFound);
+              setTranslatedTitle(currentTranslation.noMovieFound);
+            }
             setLoading(false);
             return;
           }
 
-          // Setup autocomplete suggestions with year and poster
-          setTopHits(data.results.slice(0, 6).map((hit) => ({
+          // Sort results by popularity and setup autocomplete suggestions
+          const sortedResults = [...data.results].sort((a, b) => b.popularity - a.popularity);
+          setTopHits(sortedResults.slice(0, 6).map((hit) => ({
+            id: hit.id,
             title: hit.title,
             year: hit.release_date ? hit.release_date.substring(0, 4) : '',
             poster: hit.poster_path ? `${TMDB_IMAGE_BASE}${hit.poster_path}` : null,
           })));
 
-          // Use first result
-          const movieID = data.results[0].id;
+          // Only fetch full movie details if a movie was explicitly selected
+          if (!selectedMovieId) {
+            setLoading(false);
+            return;
+          }
+
+          const movieID = selectedMovieId;
           const altTitleURL = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${TMDB_API_KEY}&append_to_response=translations`;
 
           // Fetch images for localized posters (get all languages)
@@ -357,6 +374,10 @@ const AppContent = () => {
               if (translation && translation.data.title) {
                 setTranslatedTitle(translation.data.title);
                 logTranslationViewed(translation.data.title, sourceLanguage.code, targetLanguage.code, true);
+              } else if (targetLanguage.langCode === altTitleData.original_language) {
+                // Target language matches film's original language, use original title
+                setTranslatedTitle(altTitleData.original_title);
+                logTranslationViewed(altTitleData.original_title, sourceLanguage.code, targetLanguage.code, true);
               } else if (targetLanguage.langCode === 'en') {
                 // For English, fall back to default title (usually English)
                 setTranslatedTitle(altTitleData.title);
@@ -379,7 +400,35 @@ const AppContent = () => {
           setLoading(false);
         });
     }
-  }, [targetLanguage, sourceLanguage, query, currentTranslation]);
+  }, [targetLanguage, sourceLanguage, query, selectedMovieId, currentTranslation]);
+
+  // Fetch back-translation when translated title changes
+  useEffect(() => {
+    // Only translate if we have a valid translated title and languages differ
+    if (
+      !translatedTitle ||
+      translatedTitle === currentTranslation.noTitleFound ||
+      translatedTitle === currentTranslation.noMovieFound ||
+      sourceLanguage.code === targetLanguage.code
+    ) {
+      setBackTranslation(null);
+      return;
+    }
+
+    // Translate from target language back to source language
+    translateText(translatedTitle, targetLanguage.code, sourceLanguage.code)
+      .then((result) => {
+        // Only show if different from the original search query (case-insensitive)
+        if (result && result.toLowerCase() !== query.toLowerCase()) {
+          setBackTranslation(result);
+        } else {
+          setBackTranslation(null);
+        }
+      })
+      .catch(() => {
+        setBackTranslation(null);
+      });
+  }, [translatedTitle, sourceLanguage.code, targetLanguage.code, query, currentTranslation]);
 
   if (!fontsLoaded) {
     return (
@@ -472,6 +521,7 @@ const AppContent = () => {
               languageNames={languageNames[sourceLanguage.code] || languageNames.US}
               translatedTitle={translatedTitle}
               translatedPoster={translatedPoster}
+              backTranslation={backTranslation}
               allTranslations={allTranslations}
               allPosters={allPosters}
               loading={loading}

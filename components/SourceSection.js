@@ -46,7 +46,7 @@ const SourceSection = ({
   };
 
   const handleSuggestionSelect = (suggestion) => {
-    onInput(suggestion.title);
+    onInput(suggestion.title, suggestion.id);
     setShowDropdown(false);
     Keyboard.dismiss();
   };
@@ -162,7 +162,8 @@ const styles = StyleSheet.create({
     borderColor: '#4a3f38',
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    paddingRight: 35,
     fontSize: 16,
     color: '#333',
   },
