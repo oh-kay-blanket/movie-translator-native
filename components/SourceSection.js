@@ -148,12 +148,15 @@ const styles = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 1000,
+    position: 'relative',
   },
   inputContainer: {
     flex: 1,
     position: 'relative',
     marginLeft: 10,
     paddingBottom: 2,
+    zIndex: 1000,
   },
   input: {
     width: '100%',
@@ -189,6 +192,8 @@ const styles = StyleSheet.create({
   resultWrapper: {
     flex: 1,
     justifyContent: 'center',
+    zIndex: 1,
+    position: 'relative',
   },
   resultRow: {
     flexDirection: 'row',
