@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Path, Rect, Text as SvgText, Line } from 'react-native-svg';
 
-const Logo = ({ size = 80, color = '#4a3f38' }) => (
+const Logo = ({ size = 80, color = '#333' }) => (
   <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
     {/* Film strip */}
     <Rect x="4" y="4" width="56" height="56" rx="4" stroke={color} strokeWidth="3" fill="none" />
@@ -11,18 +11,18 @@ const Logo = ({ size = 80, color = '#4a3f38' }) => (
     <Rect x="50" y="4" width="10" height="56" fill={color} />
 
     {/* Film perforations left (punch-outs) */}
-    <Rect x="6" y="10" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="6" y="20" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="6" y="30" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="6" y="40" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="6" y="50" width="6" height="5" rx="1" fill="#fcebd0" />
+    <Rect x="6" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="6" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="6" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="6" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="6" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
 
     {/* Film perforations right (punch-outs) */}
-    <Rect x="52" y="10" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="52" y="20" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="52" y="30" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="52" y="40" width="6" height="5" rx="1" fill="#fcebd0" />
-    <Rect x="52" y="50" width="6" height="5" rx="1" fill="#fcebd0" />
+    <Rect x="52" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="52" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="52" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="52" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="52" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
 
     {/* Dividing line between panels */}
     <Line x1="14" y1="32" x2="50" y2="32" stroke={color} strokeWidth="1.5" />
@@ -34,7 +34,7 @@ const Logo = ({ size = 80, color = '#4a3f38' }) => (
       fontSize="20"
       fontFamily="Arial, sans-serif"
       fontWeight="bold"
-      fill={color}
+      fill="#333"
       textAnchor="middle"
     >
       A
@@ -47,7 +47,7 @@ const Logo = ({ size = 80, color = '#4a3f38' }) => (
       fontSize="18"
       fontFamily="Arial, sans-serif"
       fontWeight="bold"
-      fill={color}
+      fill="#333"
       textAnchor="middle"
     >
       文

@@ -23,7 +23,7 @@ import Logo from './components/Logo';
 import { logSearch, logTranslationViewed, logLanguageChanged } from './utils/analytics';
 import { translateText } from './utils/translationService';
 
-const InfoIcon = ({ size = 24, color = '#4a3f38' }) => (
+const InfoIcon = ({ size = 24, color = '#333' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth={2} />
     <Path d="M12 16v-4M12 8h.01" stroke={color} strokeWidth={2} strokeLinecap="round" />
@@ -434,14 +434,14 @@ const AppContent = () => {
   if (!fontsLoaded) {
     return (
       <View style={styles.safeArea}>
-        <ActivityIndicator size="large" color="#4a3f38" />
+        <ActivityIndicator size="large" color="#333" />
       </View>
     );
   }
 
   const frameStyle = {
     height: FRAME_HEIGHT,
-    backgroundColor: '#fcebd0',
+    backgroundColor: '#fdf8f2',
     borderRadius: 12,
     marginHorizontal: 22,
     marginBottom: FRAME_GAP,
@@ -454,6 +454,7 @@ const AppContent = () => {
   const perforations = Array.from({ length: perforationCount }, (_, i) => i);
 
   return (
+    <View style={styles.outerWrapper}>
     <View style={styles.safeArea}>
       <StatusBar style="dark" />
       {/* Left perforations */}
@@ -470,9 +471,9 @@ const AppContent = () => {
       </View>
       <View style={styles.container}>
           {/* Header Frame - partially off-screen at top */}
-          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * (Platform.OS === 'web' ? 0.6 : 0.45) }]}>
+          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * (Platform.OS === 'web' ? 0.65 : 0.45) }]}>
             <View style={styles.titleRow}>
-              <Logo size={75} color="#4a3f38" />
+              <Logo size={75} color="#f78e6a" />
               <View style={styles.titleText}>
                 <Text
                   style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
@@ -540,7 +541,7 @@ const AppContent = () => {
           {/* Footer Frame - partially off-screen at bottom */}
           <View style={[frameStyle, styles.footerFrame]}>
             <TouchableOpacity onPress={() => setInfoVisible(true)} style={styles.infoButton}>
-              <InfoIcon size={28} color="#4a3f38" />
+              <InfoIcon size={28} color="#333" />
             </TouchableOpacity>
           </View>
 
@@ -563,36 +564,44 @@ const AppContent = () => {
           </Modal>
         </View>
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerWrapper: {
+    flex: 1,
+    backgroundColor: Platform.OS === 'web' ? '#333' : '#f78e6a',
+    alignItems: 'center',
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#f2d5ab',
+    backgroundColor: '#f78e6a',
+    width: '100%',
+    maxWidth: Platform.OS === 'web' ? 414 : undefined,
   },
   container: {
     flex: 1,
-    backgroundColor: '#f2d5ab',
+    backgroundColor: '#f78e6a',
   },
   perforationStrip: {
     position: 'absolute',
     left: 5,
-    top: 0,
-    bottom: 0,
+    top: -20,
+    bottom: -20,
     width: 12,
     justifyContent: 'space-evenly',
     alignItems: 'center',
     zIndex: 10,
   },
   perforationStripRight: {
-    left: undefined,
+    left: 'auto',
     right: 5,
   },
   perforation: {
     width: 8,
     height: 16,
-    backgroundColor: 'rgba(74, 63, 56, 0.15)',
+    backgroundColor: 'rgba(51, 51, 51, 0.35)',
     borderRadius: 2,
   },
   headerFrame: {
@@ -615,7 +624,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   mainTitle: {
-    color: '#4a3f38',
+    color: '#333',
     fontSize: 28,
     lineHeight: 32,
   },
@@ -667,7 +676,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   closeButton: {
-    backgroundColor: '#4a3f38',
+    backgroundColor: '#333',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,

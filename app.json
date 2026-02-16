@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#f2d5ab"
+      "backgroundColor": "#f78e6a"
     },
     "ios": {
       "supportsTablet": true,
@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#f2d5ab"
+        "backgroundColor": "#f78e6a"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.plunketk.movietranslator",

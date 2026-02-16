@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, Dimensions, Platform } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
-const POSTER_WIDTH = screenWidth * 0.3;
+const POSTER_WIDTH = Platform.OS === 'web' ? Math.min(screenWidth * 0.3, 120) : screenWidth * 0.3;
 const POSTER_HEIGHT = POSTER_WIDTH * 1.5;
 import * as Speech from 'expo-speech';
 import Svg, { Path } from 'react-native-svg';
@@ -11,7 +11,7 @@ import LanguagePicker from './LanguagePicker';
 const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
 const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
 
-const SpeakerIcon = ({ size = 24, color = '#4a3f38' }) => (
+const SpeakerIcon = ({ size = 24, color = '#333' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
       d="M11 5L6 9H2v6h4l5 4V5z"
@@ -88,7 +88,7 @@ const ResultSection = ({
                 </Text>
                 {!loading && translatedTitle && !translatedTitle.includes(translations.noTitleFound) && (
                   <TouchableOpacity style={styles.speakButton} onPress={handleSpeak}>
-                    <SpeakerIcon size={24} color="#4a3f38" />
+                    <SpeakerIcon size={24} color="#333" />
                   </TouchableOpacity>
                 )}
               </View>

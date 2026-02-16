@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   pickerButtonText: {
-    color: '#4a3f38',
+    color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 20,
-    color: '#4a3f38',
+    color: '#333',
     fontWeight: 'bold',
   },
   listContainer: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   listItemTextSelected: {
-    color: '#4a3f38',
+    color: '#333',
     fontWeight: 'bold',
   },
   listItemSubtext: {

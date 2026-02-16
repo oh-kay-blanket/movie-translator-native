@@ -98,7 +98,7 @@ const Search = ({
         <TextInput
           style={styles.input}
           placeholder="search for a movie"
-          placeholderTextColor="#999"
+          placeholderTextColor="#444"
           value={query}
           onChangeText={handleTextChange}
           onFocus={() => setShowDropdown(query.length > 0)}
@@ -127,19 +127,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    color: '#4a3f38',
+    color: '#333',
     fontSize: 24,
     fontWeight: 'bold',
     fontStyle: 'italic',
   },
   pickerButton: {
     borderBottomWidth: 3,
-    borderBottomColor: '#4a3f38',
+    borderBottomColor: '#333',
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
   pickerButtonText: {
-    color: '#4a3f38',
+    color: '#333',
     fontSize: 24,
     fontWeight: 'bold',
     fontStyle: 'italic',
@@ -174,25 +174,25 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 20,
-    color: '#4a3f38',
+    color: '#333',
     fontWeight: 'bold',
   },
   pickerWrapper: {
     height: 200,
   },
   picker: {
-    color: '#4a3f38',
+    color: '#333',
     backgroundColor: 'transparent',
   },
   pickerItem: {
-    color: '#4a3f38',
+    color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
   },
   inputContainer: {
     position: 'relative',
     marginBottom: 30,
-    shadowColor: '#4a3f38',
+    shadowColor: '#333',
     shadowOffset: { width: 7, height: 7 },
     shadowOpacity: 1,
     shadowRadius: 0,
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: '#f2d5ab',
+    backgroundColor: '#f78e6a',
     borderWidth: 2,
-    borderColor: '#4a3f38',
+    borderColor: '#333',
     textAlign: 'center',
     paddingVertical: 15,
     paddingHorizontal: 10,

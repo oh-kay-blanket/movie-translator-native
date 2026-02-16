@@ -10,10 +10,11 @@ import {
   Modal,
   Pressable,
   Dimensions,
+  Platform,
 } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
-const POSTER_WIDTH = screenWidth * 0.3;
+const POSTER_WIDTH = Platform.OS === 'web' ? Math.min(screenWidth * 0.3, 120) : screenWidth * 0.3;
 const POSTER_HEIGHT = POSTER_WIDTH * 1.5;
 import LanguagePicker from './LanguagePicker';
 import AutocompleteDropdown from './AutocompleteDropdown';
@@ -75,7 +76,7 @@ const SourceSection = ({
           <TextInput
             style={styles.input}
             placeholder={translations.placeholder}
-            placeholderTextColor="#666"
+            placeholderTextColor="#444"
             value={query}
             onChangeText={handleTextChange}
             onFocus={() => setShowDropdown(query.length > 0)}
@@ -160,9 +161,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: '#f2d5ab',
+    backgroundColor: '#f78e6a',
     borderWidth: 2,
-    borderColor: '#4a3f38',
+    borderColor: '#333',
     borderRadius: 8,
     paddingVertical: 12,
     paddingLeft: 10,
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   clearButtonText: {
-    color: '#999',
+    color: '#555',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_900Black',
   },
   year: {
-    color: '#666',
+    color: '#555',
     fontSize: 14,
     marginTop: 4,
   },
