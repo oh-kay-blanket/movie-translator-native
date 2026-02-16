@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build-preview": "npx eas build --platform android --profile preview",
-    "build-prod": "npx eas build --platform android --profile preview"
+    "build-prod": "npx eas build --platform android --profile preview",
+    "deploy:web": "expo export --platform web && cd dist && vercel --prod"
   },
   "dependencies": {
     "@expo-google-fonts/alfa-slab-one": "^0.4.1",
@@ -34,5 +35,8 @@
     "react-native-svg": "15.12.1",
     "react-native-web": "^0.21.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
 }

@@ -8,6 +8,7 @@ import {
   Modal,
   TouchableOpacity,
   Pressable,
+  Platform,
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -201,7 +202,7 @@ const AppContent = () => {
   const [backTranslation, setBackTranslation] = useState(null);
 
   // Calculate frame height for film strip effect
-  const VISIBLE_FRAMES = 2.2;
+  const VISIBLE_FRAMES = Platform.OS === 'web' ? 2.0 : 2.2;
   const FRAME_HEIGHT = screenHeight / (VISIBLE_FRAMES + 0.7);
 
   const currentTranslation = translations[sourceLanguage.code] || translations.US;
@@ -469,7 +470,7 @@ const AppContent = () => {
       </View>
       <View style={styles.container}>
           {/* Header Frame - partially off-screen at top */}
-          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * 0.45 }]}>
+          <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * (Platform.OS === 'web' ? 0.6 : 0.45) }]}>
             <View style={styles.titleRow}>
               <Logo size={75} color="#4a3f38" />
               <View style={styles.titleText}>
