@@ -1,41 +1,41 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="512" height="512" fill="#f2d5ab"/>
+  <rect width="512" height="512" fill="#fdf8f2"/>
 
   <!-- Film strip - centered at 50% size (256x256 area, so icon is ~224x224) -->
   <g transform="translate(144, 144) scale(0.5)">
     <!-- Film strip outline -->
-    <rect x="4" y="4" width="440" height="440" rx="32" stroke="#4a3f38" stroke-width="24" fill="none"/>
+    <rect x="4" y="4" width="440" height="440" rx="32" stroke="#f78e6a" stroke-width="24" fill="none"/>
 
     <!-- Perforation strip backgrounds -->
-    <rect x="4" y="4" width="80" height="440" fill="#4a3f38" rx="32"/>
-    <rect x="364" y="4" width="80" height="440" fill="#4a3f38" rx="32"/>
+    <rect x="4" y="4" width="80" height="440" fill="#f78e6a" rx="32"/>
+    <rect x="364" y="4" width="80" height="440" fill="#f78e6a" rx="32"/>
 
     <!-- Fix corners -->
-    <rect x="36" y="4" width="48" height="440" fill="#4a3f38"/>
-    <rect x="364" y="4" width="48" height="440" fill="#4a3f38"/>
+    <rect x="36" y="4" width="48" height="440" fill="#f78e6a"/>
+    <rect x="364" y="4" width="48" height="440" fill="#f78e6a"/>
 
     <!-- Film perforations left -->
-    <rect x="16" y="40" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="16" y="120" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="16" y="200" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="16" y="280" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="16" y="360" width="48" height="56" rx="8" fill="#f2d5ab"/>
+    <rect x="16" y="40" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="16" y="120" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="16" y="200" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="16" y="280" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="16" y="360" width="48" height="56" rx="8" fill="#fdf8f2"/>
 
     <!-- Film perforations right -->
-    <rect x="384" y="40" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="384" y="120" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="384" y="200" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="384" y="280" width="48" height="56" rx="8" fill="#f2d5ab"/>
-    <rect x="384" y="360" width="48" height="56" rx="8" fill="#f2d5ab"/>
+    <rect x="384" y="40" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="384" y="120" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="384" y="200" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="384" y="280" width="48" height="56" rx="8" fill="#fdf8f2"/>
+    <rect x="384" y="360" width="48" height="56" rx="8" fill="#fdf8f2"/>
 
     <!-- Dividing line between panels -->
-    <line x1="84" y1="224" x2="364" y2="224" stroke="#4a3f38" stroke-width="12"/>
+    <line x1="84" y1="224" x2="364" y2="224" stroke="#f78e6a" stroke-width="12"/>
 
     <!-- "A" character - top panel -->
-    <text x="224" y="170" font-size="140" font-family="Arial, sans-serif" font-weight="bold" fill="#4a3f38" text-anchor="middle">A</text>
+    <text x="224" y="170" font-size="140" font-family="Arial, sans-serif" font-weight="bold" fill="#333" text-anchor="middle">A</text>
 
     <!-- "文" character - bottom panel -->
-    <text x="224" y="380" font-size="130" font-family="Arial, sans-serif" font-weight="bold" fill="#4a3f38" text-anchor="middle">文</text>
+    <text x="224" y="380" font-size="130" font-family="Arial, sans-serif" font-weight="bold" fill="#333" text-anchor="middle">文</text>
   </g>
 </svg>
