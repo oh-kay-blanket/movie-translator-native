@@ -101,7 +101,7 @@ const SourceSection = ({
         </View>
 
         <View style={styles.resultWrapper}>
-          {(originalPoster || originalTitle) && (
+          {!!(originalPoster || originalTitle) && (
             <View style={styles.resultRow}>
               {originalPoster && (
                 <TouchableOpacity onPress={() => setShowPosterModal(true)}>
