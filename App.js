@@ -30,6 +30,22 @@ const InfoIcon = ({ size = 24, color = '#333' }) => (
   </Svg>
 );
 
+const AutoSizeText = ({ children, style, minFontSize = 14, maxFontSize = 28 }) => {
+  const text = typeof children === 'string' ? children : '';
+  const maxLineLength = text.split('\n').reduce((max, line) => Math.max(max, line.length), 0);
+
+  // Scale font size based on longest line (roughly 15 chars at max size)
+  const targetChars = 15;
+  const scale = Math.min(1, targetChars / maxLineLength);
+  const fontSize = Math.max(minFontSize, Math.floor(maxFontSize * scale));
+
+  return (
+    <Text style={[style, { fontSize, lineHeight: fontSize * 1.2 }]}>
+      {children}
+    </Text>
+  );
+};
+
 const languageList = [
     { name: 'العربية', engName: 'Arabic', code: 'SA', langCode: 'ar' },
     { name: 'Bahasa indonesia', engName: 'Indonesian', code: 'ID', langCode: 'id' },
@@ -67,37 +83,37 @@ const languageList = [
 
 const translations = {
     SA: { title: ['مترجم', 'عناوين الأفلام'], placeholder: 'ابحث عن فيلم', selectLanguage: 'اختر اللغة', noPoster: 'لا يوجد ملصق', searching: 'جاري البحث...', noMovieFound: 'لم يتم العثور على فيلم', noTitleFound: 'لم يتم العثور على عنوان' },
-    ID: { title: ['PENERJEMAH', 'JUDUL FILM'], placeholder: 'cari film', selectLanguage: 'Pilih Bahasa', noPoster: 'Tidak ada poster', searching: 'mencari...', noMovieFound: 'Film tidak ditemukan', noTitleFound: 'Judul tidak ditemukan' },
-    BG: { title: ['ПРЕВОДАЧ НА', 'ФИЛМОВИ ЗАГЛАВИЯ'], placeholder: 'търсене на филм', selectLanguage: 'Изберете език', noPoster: 'Няма плакат', searching: 'търсене...', noMovieFound: 'Няма намерен филм', noTitleFound: 'Няма намерено заглавие' },
-    CZ: { title: ['PŘEKLADAČ', 'FILMOVÝCH NÁZVŮ'], placeholder: 'hledat film', selectLanguage: 'Vyberte jazyk', noPoster: 'Žádný plakát', searching: 'hledání...', noMovieFound: 'Film nenalezen', noTitleFound: 'Název nenalezen' },
-    DK: { title: ['FILMTITEL', 'OVERSÆTTER'], placeholder: 'søg efter en film', selectLanguage: 'Vælg sprog', noPoster: 'Ingen plakat', searching: 'søger...', noMovieFound: 'Ingen film fundet', noTitleFound: 'Ingen titel fundet' },
-    DE: { title: ['FILMTITEL', 'ÜBERSETZER'], placeholder: 'Film suchen', selectLanguage: 'Sprache wählen', noPoster: 'Kein Poster', searching: 'suche...', noMovieFound: 'Kein Film gefunden', noTitleFound: 'Kein Titel gefunden' },
-    US: { title: ['MOVIE TITLE', 'TRANSLATOR'], placeholder: 'search for a movie', selectLanguage: 'Select Language', noPoster: 'No poster', searching: 'searching...', noMovieFound: 'No movie found', noTitleFound: 'No title found' },
-    ES: { title: ['TRADUCTOR DE', 'TÍTULOS DE PELÍCULAS'], placeholder: 'buscar una película', selectLanguage: 'Seleccionar idioma', noPoster: 'Sin póster', searching: 'buscando...', noMovieFound: 'Película no encontrada', noTitleFound: 'Título no encontrado' },
-    FR: { title: ['TRADUCTEUR DE', 'TITRES DE FILMS'], placeholder: 'rechercher un film', selectLanguage: 'Choisir la langue', noPoster: 'Pas d\'affiche', searching: 'recherche...', noMovieFound: 'Aucun film trouvé', noTitleFound: 'Aucun titre trouvé' },
-    GR: { title: ['ΜΕΤΑΦΡΑΣΤΗΣ', 'ΤΙΤΛΩΝ ΤΑΙΝΙΩΝ'], placeholder: 'αναζήτηση ταινίας', selectLanguage: 'Επιλέξτε γλώσσα', noPoster: 'Χωρίς αφίσα', searching: 'αναζήτηση...', noMovieFound: 'Δεν βρέθηκε ταινία', noTitleFound: 'Δεν βρέθηκε τίτλος' },
+    ID: { title: ['Penerjemah', 'Judul Film'], placeholder: 'cari film', selectLanguage: 'Pilih Bahasa', noPoster: 'Tidak ada poster', searching: 'mencari...', noMovieFound: 'Film tidak ditemukan', noTitleFound: 'Judul tidak ditemukan' },
+    BG: { title: ['Преводач На', 'Филмови Заглавия'], placeholder: 'търсене на филм', selectLanguage: 'Изберете език', noPoster: 'Няма плакат', searching: 'търсене...', noMovieFound: 'Няма намерен филм', noTitleFound: 'Няма намерено заглавие' },
+    CZ: { title: ['Překladač', 'Filmových Názvů'], placeholder: 'hledat film', selectLanguage: 'Vyberte jazyk', noPoster: 'Žádný plakát', searching: 'hledání...', noMovieFound: 'Film nenalezen', noTitleFound: 'Název nenalezen' },
+    DK: { title: ['Filmtitel', 'Oversætter'], placeholder: 'søg efter en film', selectLanguage: 'Vælg sprog', noPoster: 'Ingen plakat', searching: 'søger...', noMovieFound: 'Ingen film fundet', noTitleFound: 'Ingen titel fundet' },
+    DE: { title: ['Filmtitel', 'Übersetzer'], placeholder: 'Film suchen', selectLanguage: 'Sprache wählen', noPoster: 'Kein Poster', searching: 'suche...', noMovieFound: 'Kein Film gefunden', noTitleFound: 'Kein Titel gefunden' },
+    US: { title: ['Movie Title', 'Translator'], placeholder: 'Search for a movie', selectLanguage: 'Select Language', noPoster: 'No poster', searching: 'searching...', noMovieFound: 'No movie found', noTitleFound: 'No title found' },
+    ES: { title: ['Traductor De', 'Títulos De Películas'], placeholder: 'buscar una película', selectLanguage: 'Seleccionar idioma', noPoster: 'Sin póster', searching: 'buscando...', noMovieFound: 'Película no encontrada', noTitleFound: 'Título no encontrado' },
+    FR: { title: ['Traducteur De', 'Titres De Films'], placeholder: 'rechercher un film', selectLanguage: 'Choisir la langue', noPoster: 'Pas d\'affiche', searching: 'recherche...', noMovieFound: 'Aucun film trouvé', noTitleFound: 'Aucun titre trouvé' },
+    GR: { title: ['Μεταφραστής', 'Τίτλων Ταινιών'], placeholder: 'αναζήτηση ταινίας', selectLanguage: 'Επιλέξτε γλώσσα', noPoster: 'Χωρίς αφίσα', searching: 'αναζήτηση...', noMovieFound: 'Δεν βρέθηκε ταινία', noTitleFound: 'Δεν βρέθηκε τίτλος' },
     IL: { title: ['מתרגם', 'כותרות סרטים'], placeholder: 'חפש סרט', selectLanguage: 'בחר שפה', noPoster: 'אין פוסטר', searching: 'מחפש...', noMovieFound: 'לא נמצא סרט', noTitleFound: 'לא נמצאה כותרת' },
     IN: { title: ['फ़िल्म शीर्षक', 'अनुवादक'], placeholder: 'फ़िल्म खोजें', selectLanguage: 'भाषा चुनें', noPoster: 'कोई पोस्टर नहीं', searching: 'खोज रहा है...', noMovieFound: 'कोई फ़िल्म नहीं मिली', noTitleFound: 'कोई शीर्षक नहीं मिला' },
-    HU: { title: ['FILMCÍM', 'FORDÍTÓ'], placeholder: 'film keresése', selectLanguage: 'Nyelv kiválasztása', noPoster: 'Nincs poszter', searching: 'keresés...', noMovieFound: 'Nem található film', noTitleFound: 'Nem található cím' },
-    IT: { title: ['TRADUTTORE DI', 'TITOLI DI FILM'], placeholder: 'cerca un film', selectLanguage: 'Seleziona lingua', noPoster: 'Nessun poster', searching: 'ricerca...', noMovieFound: 'Nessun film trovato', noTitleFound: 'Nessun titolo trovato' },
+    HU: { title: ['Filmcím', 'Fordító'], placeholder: 'film keresése', selectLanguage: 'Nyelv kiválasztása', noPoster: 'Nincs poszter', searching: 'keresés...', noMovieFound: 'Nem található film', noTitleFound: 'Nem található cím' },
+    IT: { title: ['Traduttore Di', 'Titoli Di Film'], placeholder: 'cerca un film', selectLanguage: 'Seleziona lingua', noPoster: 'Nessun poster', searching: 'ricerca...', noMovieFound: 'Nessun film trovato', noTitleFound: 'Nessun titolo trovato' },
     JP: { title: ['映画タイトル', '翻訳'], placeholder: '映画を検索', selectLanguage: '言語を選択', noPoster: 'ポスターなし', searching: '検索中...', noMovieFound: '映画が見つかりません', noTitleFound: 'タイトルが見つかりません' },
     KR: { title: ['영화 제목', '번역기'], placeholder: '영화 검색', selectLanguage: '언어 선택', noPoster: '포스터 없음', searching: '검색 중...', noMovieFound: '영화를 찾을 수 없습니다', noTitleFound: '제목을 찾을 수 없습니다' },
     CN: { title: ['电影标题', '翻译器'], placeholder: '搜索电影', selectLanguage: '选择语言', noPoster: '无海报', searching: '搜索中...', noMovieFound: '未找到电影', noTitleFound: '未找到标题' },
     TW: { title: ['電影標題', '翻譯器'], placeholder: '搜尋電影', selectLanguage: '選擇語言', noPoster: '無海報', searching: '搜尋中...', noMovieFound: '找不到電影', noTitleFound: '找不到標題' },
-    NL: { title: ['FILMTITEL', 'VERTALER'], placeholder: 'zoek een film', selectLanguage: 'Selecteer taal', noPoster: 'Geen poster', searching: 'zoeken...', noMovieFound: 'Geen film gevonden', noTitleFound: 'Geen titel gevonden' },
-    NO: { title: ['FILMTITTEL', 'OVERSETTER'], placeholder: 'søk etter en film', selectLanguage: 'Velg språk', noPoster: 'Ingen plakat', searching: 'søker...', noMovieFound: 'Ingen film funnet', noTitleFound: 'Ingen tittel funnet' },
+    NL: { title: ['Filmtitel', 'Vertaler'], placeholder: 'zoek een film', selectLanguage: 'Selecteer taal', noPoster: 'Geen poster', searching: 'zoeken...', noMovieFound: 'Geen film gevonden', noTitleFound: 'Geen titel gevonden' },
+    NO: { title: ['Filmtittel', 'Oversetter'], placeholder: 'søk etter en film', selectLanguage: 'Velg språk', noPoster: 'Ingen plakat', searching: 'søker...', noMovieFound: 'Ingen film funnet', noTitleFound: 'Ingen tittel funnet' },
     IR: { title: ['مترجم', 'عنوان فیلم'], placeholder: 'جستجوی فیلم', selectLanguage: 'انتخاب زبان', noPoster: 'بدون پوستر', searching: 'در حال جستجو...', noMovieFound: 'فیلمی یافت نشد', noTitleFound: 'عنوانی یافت نشد' },
-    PL: { title: ['TŁUMACZ', 'TYTUŁÓW FILMÓW'], placeholder: 'szukaj filmu', selectLanguage: 'Wybierz język', noPoster: 'Brak plakatu', searching: 'szukanie...', noMovieFound: 'Nie znaleziono filmu', noTitleFound: 'Nie znaleziono tytułu' },
-    BR: { title: ['TRADUTOR DE', 'TÍTULOS DE FILMES'], placeholder: 'pesquisar um filme', selectLanguage: 'Selecionar idioma', noPoster: 'Sem pôster', searching: 'pesquisando...', noMovieFound: 'Filme não encontrado', noTitleFound: 'Título não encontrado' },
-    PT: { title: ['TRADUTOR DE', 'TÍTULOS DE FILMES'], placeholder: 'pesquisar um filme', selectLanguage: 'Selecionar idioma', noPoster: 'Sem cartaz', searching: 'a pesquisar...', noMovieFound: 'Filme não encontrado', noTitleFound: 'Título não encontrado' },
-    RO: { title: ['TRADUCĂTOR DE', 'TITLURI DE FILME'], placeholder: 'caută un film', selectLanguage: 'Selectează limba', noPoster: 'Fără poster', searching: 'căutare...', noMovieFound: 'Niciun film găsit', noTitleFound: 'Niciun titlu găsit' },
-    RU: { title: ['ПЕРЕВОДЧИК', 'НАЗВАНИЙ ФИЛЬМОВ'], placeholder: 'поиск фильма', selectLanguage: 'Выберите язык', noPoster: 'Нет постера', searching: 'поиск...', noMovieFound: 'Фильм не найден', noTitleFound: 'Название не найдено' },
-    FI: { title: ['ELOKUVAN NIMEN', 'KÄÄNTÄJÄ'], placeholder: 'etsi elokuvaa', selectLanguage: 'Valitse kieli', noPoster: 'Ei julistetta', searching: 'haetaan...', noMovieFound: 'Elokuvaa ei löytynyt', noTitleFound: 'Nimikettä ei löytynyt' },
-    SE: { title: ['FILMTITEL', 'ÖVERSÄTTARE'], placeholder: 'sök efter en film', selectLanguage: 'Välj språk', noPoster: 'Ingen affisch', searching: 'söker...', noMovieFound: 'Ingen film hittades', noTitleFound: 'Ingen titel hittades' },
+    PL: { title: ['Tłumacz', 'Tytułów Filmów'], placeholder: 'szukaj filmu', selectLanguage: 'Wybierz język', noPoster: 'Brak plakatu', searching: 'szukanie...', noMovieFound: 'Nie znaleziono filmu', noTitleFound: 'Nie znaleziono tytułu' },
+    BR: { title: ['Tradutor De', 'Títulos De Filmes'], placeholder: 'pesquisar um filme', selectLanguage: 'Selecionar idioma', noPoster: 'Sem pôster', searching: 'pesquisando...', noMovieFound: 'Filme não encontrado', noTitleFound: 'Título não encontrado' },
+    PT: { title: ['Tradutor De', 'Títulos De Filmes'], placeholder: 'pesquisar um filme', selectLanguage: 'Selecionar idioma', noPoster: 'Sem cartaz', searching: 'a pesquisar...', noMovieFound: 'Filme não encontrado', noTitleFound: 'Título não encontrado' },
+    RO: { title: ['Traducător De', 'Titluri De Filme'], placeholder: 'caută un film', selectLanguage: 'Selectează limba', noPoster: 'Fără poster', searching: 'căutare...', noMovieFound: 'Niciun film găsit', noTitleFound: 'Niciun titlu găsit' },
+    RU: { title: ['Переводчик', 'Названий Фильмов'], placeholder: 'поиск фильма', selectLanguage: 'Выберите язык', noPoster: 'Нет постера', searching: 'поиск...', noMovieFound: 'Фильм не найден', noTitleFound: 'Название не найдено' },
+    FI: { title: ['Elokuvan Nimen', 'Kääntäjä'], placeholder: 'etsi elokuvaa', selectLanguage: 'Valitse kieli', noPoster: 'Ei julistetta', searching: 'haetaan...', noMovieFound: 'Elokuvaa ei löytynyt', noTitleFound: 'Nimikettä ei löytynyt' },
+    SE: { title: ['Filmtitel', 'Översättare'], placeholder: 'sök efter en film', selectLanguage: 'Välj språk', noPoster: 'Ingen affisch', searching: 'söker...', noMovieFound: 'Ingen film hittades', noTitleFound: 'Ingen titel hittades' },
     TH: { title: ['แปลชื่อ', 'ภาพยนตร์'], placeholder: 'ค้นหาภาพยนตร์', selectLanguage: 'เลือกภาษา', noPoster: 'ไม่มีโปสเตอร์', searching: 'กำลังค้นหา...', noMovieFound: 'ไม่พบภาพยนตร์', noTitleFound: 'ไม่พบชื่อเรื่อง' },
-    VN: { title: ['DỊCH TÊN', 'PHIM'], placeholder: 'tìm kiếm phim', selectLanguage: 'Chọn ngôn ngữ', noPoster: 'Không có poster', searching: 'đang tìm...', noMovieFound: 'Không tìm thấy phim', noTitleFound: 'Không tìm thấy tiêu đề' },
-    TR: { title: ['FİLM BAŞLIĞI', 'ÇEVİRMEN'], placeholder: 'film ara', selectLanguage: 'Dil seçin', noPoster: 'Afiş yok', searching: 'aranıyor...', noMovieFound: 'Film bulunamadı', noTitleFound: 'Başlık bulunamadı' },
-    UA: { title: ['ПЕРЕКЛАДАЧ', 'НАЗВ ФІЛЬМІВ'], placeholder: 'шукати фільм', selectLanguage: 'Виберіть мову', noPoster: 'Немає постера', searching: 'пошук...', noMovieFound: 'Фільм не знайдено', noTitleFound: 'Назву не знайдено' },
+    VN: { title: ['Dịch Tên', 'Phim'], placeholder: 'tìm kiếm phim', selectLanguage: 'Chọn ngôn ngữ', noPoster: 'Không có poster', searching: 'đang tìm...', noMovieFound: 'Không tìm thấy phim', noTitleFound: 'Không tìm thấy tiêu đề' },
+    TR: { title: ['Film Başlığı', 'Çevirmen'], placeholder: 'film ara', selectLanguage: 'Dil seçin', noPoster: 'Afiş yok', searching: 'aranıyor...', noMovieFound: 'Film bulunamadı', noTitleFound: 'Başlık bulunamadı' },
+    UA: { title: ['Перекладач', 'Назв Фільмів'], placeholder: 'шукати фільм', selectLanguage: 'Виберіть мову', noPoster: 'Немає постера', searching: 'пошук...', noMovieFound: 'Фільм не знайдено', noTitleFound: 'Назву не знайдено' },
 };
 
 // Language names in each supported language
@@ -145,7 +161,14 @@ const defaultLanguage = { name: 'English', engName: 'English', code: 'US', langC
 // Languages that use Latin script (Alfa Slab One supports these)
 const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
 
-const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
+// Languages that work well with Montserrat (Cyrillic)
+const montserratLanguages = ['BG', 'RU', 'UA'];
+
+const getTitleFontStyle = (langCode) => {
+  if (latinScriptLanguages.includes(langCode)) return 'primary';
+  if (montserratLanguages.includes(langCode)) return 'montserrat';
+  return 'system';
+};
 
 // Get initial language based on device locale
 const getDeviceLanguage = () => {
@@ -475,22 +498,19 @@ const AppContent = () => {
             <View style={styles.titleRow}>
               <Logo size={75} color="#f78e6a" />
               <View style={styles.titleText}>
-                <Text
-                  style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.5}
+                <AutoSizeText
+                  style={[
+                    styles.mainTitle,
+                    getTitleFontStyle(sourceLanguage.code) === 'primary' ? styles.titleFontPrimary :
+                    getTitleFontStyle(sourceLanguage.code) === 'montserrat' ? styles.titleFontMontserrat :
+                    styles.titleFontSystem
+                  ]}
+                  maxFontSize={28}
+                  minFontSize={14}
+                  numberOfLines={2}
                 >
-                  {currentTranslation.title[0]}
-                </Text>
-                <Text
-                  style={[styles.mainTitle, usesLatinScript(sourceLanguage.code) ? styles.titleFontPrimary : styles.titleFontFallback]}
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.5}
-                >
-                  {currentTranslation.title[1]}
-                </Text>
+                  {currentTranslation.title[0]}{'\n'}{currentTranslation.title[1]}
+                </AutoSizeText>
               </View>
             </View>
           </View>
@@ -625,15 +645,17 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     color: '#333',
-    fontSize: 28,
-    lineHeight: 32,
   },
   titleFontPrimary: {
     fontFamily: 'AlfaSlabOne_400Regular',
     letterSpacing: 0,
   },
-  titleFontFallback: {
+  titleFontMontserrat: {
     fontFamily: 'Montserrat_900Black',
+    letterSpacing: 1,
+  },
+  titleFontSystem: {
+    fontWeight: '900',
     letterSpacing: 1,
   },
   infoButton: {

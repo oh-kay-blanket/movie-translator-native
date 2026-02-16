@@ -10,19 +10,19 @@ const Logo = ({ size = 80, color = '#333' }) => (
     <Rect x="4" y="4" width="10" height="56" fill={color} />
     <Rect x="50" y="4" width="10" height="56" fill={color} />
 
-    {/* Film perforations left (punch-outs) */}
-    <Rect x="6" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="6" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="6" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="6" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="6" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
+    {/* Film perforations left (punch-outs) - centered accounting for stroke */}
+    <Rect x="5" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="5" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="5" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="5" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="5" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
 
-    {/* Film perforations right (punch-outs) */}
-    <Rect x="52" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="52" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="52" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="52" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
-    <Rect x="52" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
+    {/* Film perforations right (punch-outs) - centered accounting for stroke */}
+    <Rect x="53" y="10" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="53" y="20" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="53" y="30" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="53" y="40" width="6" height="5" rx="1" fill="#fdf8f2" />
+    <Rect x="53" y="50" width="6" height="5" rx="1" fill="#fdf8f2" />
 
     {/* Dividing line between panels */}
     <Line x1="14" y1="32" x2="50" y2="32" stroke={color} strokeWidth="1.5" />
