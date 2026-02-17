@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from 'react-native';
 
 const AutocompleteDropdown = ({ suggestions, onSelect, visible }) => {
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
     paddingTop: 8,
     zIndex: 1000,
-    maxHeight: 250,
+    maxHeight: Platform.OS === 'web' ? 210 : 250,
   },
   item: {
     flexDirection: 'row',

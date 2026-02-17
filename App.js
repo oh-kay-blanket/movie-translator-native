@@ -200,36 +200,27 @@ const STRIP_BREAKPOINT = 700;
 const AppContent = () => {
   const { height: windowHeight, width: screenWidth } = useWindowDimensions();
 
-  // Store the initial/max height to prevent keyboard resize on mobile web
-  const initialHeightRef = useRef(windowHeight);
+  // Store the initial height to prevent keyboard resize on mobile web
+  const initialHeightRef = useRef(null);
+  const lastWidthRef = useRef(screenWidth);
 
-  // On mobile web, use the larger of current or initial height to prevent
-  // layout compression when the keyboard appears
+  // Initialize height once on first render
+  if (initialHeightRef.current === null) {
+    initialHeightRef.current = windowHeight;
+  }
+
+  // On mobile web, always use the fixed initial height
   const screenHeight = Platform.OS === 'web'
-    ? Math.max(windowHeight, initialHeightRef.current)
+    ? initialHeightRef.current
     : windowHeight;
 
-  // Update initial height only when width changes (orientation change) or height increases
+  // Only update stored height on orientation change (width changes significantly)
   useEffect(() => {
-    if (windowHeight > initialHeightRef.current) {
+    if (Math.abs(screenWidth - lastWidthRef.current) > 50) {
       initialHeightRef.current = windowHeight;
+      lastWidthRef.current = screenWidth;
     }
   }, [windowHeight, screenWidth]);
-
-  // On web, modify viewport meta to prevent keyboard resize
-  useEffect(() => {
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      const viewport = document.querySelector('meta[name="viewport"]');
-      if (viewport && !viewport.content.includes('interactive-widget')) {
-        viewport.content = viewport.content + ', interactive-widget=overlays-content';
-      }
-      // Also set min-height on root to prevent shrinking
-      const root = document.getElementById('root');
-      if (root) {
-        root.style.minHeight = initialHeightRef.current + 'px';
-      }
-    }
-  }, []);
 
   const useStripMode = screenWidth >= STRIP_BREAKPOINT;
   const [fontsLoaded] = useFonts({
