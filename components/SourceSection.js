@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Platform,
 } from 'react-native';
 
 import LanguagePicker from './LanguagePicker';
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     fontFamily: 'AlfaSlabOne_400Regular',
   },
   titleFontFallback: {
-    fontFamily: 'Montserrat_900Black',
+    fontWeight: Platform.select({ web: '700', default: '600' }),
   },
   year: {
     color: '#555',

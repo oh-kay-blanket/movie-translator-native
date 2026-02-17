@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
 
 const Result = ({
   language,
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#333',
     fontSize: 18,
+    fontWeight: Platform.select({ web: '600', default: '500' }),
     flexShrink: 1,
   },
 });

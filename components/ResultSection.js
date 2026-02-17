@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 import Svg, { Path } from 'react-native-svg';
 import LanguagePicker from './LanguagePicker';
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     fontFamily: 'AlfaSlabOne_400Regular',
   },
   titleFontFallback: {
-    fontFamily: 'Montserrat_900Black',
+    fontWeight: Platform.select({ web: '700', default: '600' }),
   },
   titleMuted: {
     color: '#999',
