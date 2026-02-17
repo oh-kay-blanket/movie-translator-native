@@ -9,15 +9,18 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-  Dimensions,
-  Platform,
 } from 'react-native';
 
-const { width: screenWidth } = Dimensions.get('window');
-const POSTER_WIDTH = Platform.OS === 'web' ? Math.min(screenWidth * 0.3, 120) : screenWidth * 0.3;
-const POSTER_HEIGHT = POSTER_WIDTH * 1.5;
 import LanguagePicker from './LanguagePicker';
 import AutocompleteDropdown from './AutocompleteDropdown';
+
+const getPosterSize = (frameHeight) => {
+  // Limit poster height to 50% of frame, with 2:3 aspect ratio
+  const maxHeight = frameHeight * 0.5;
+  const height = Math.min(maxHeight, 180);
+  const width = height / 1.5;
+  return { width, height };
+};
 
 const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
 const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
@@ -106,7 +109,7 @@ const SourceSection = ({
             <View style={styles.resultRow}>
               {originalPoster && (
                 <TouchableOpacity onPress={() => setShowPosterModal(true)}>
-                  <Image source={{ uri: originalPoster }} style={styles.poster} />
+                  <Image source={{ uri: originalPoster }} style={[styles.poster, getPosterSize(frameHeight)]} />
                 </TouchableOpacity>
               )}
               <View style={styles.titleContainer}>
@@ -125,6 +128,8 @@ const SourceSection = ({
         visible={showPosterModal}
         transparent={true}
         animationType="fade"
+        presentationStyle="overFullScreen"
+        statusBarTranslucent={true}
         onRequestClose={() => setShowPosterModal(false)}
       >
         <Pressable
@@ -201,8 +206,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   poster: {
-    width: POSTER_WIDTH,
-    height: POSTER_HEIGHT,
     borderRadius: 8,
     backgroundColor: '#ccc',
   },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -194,8 +194,44 @@ const getDeviceLanguage = () => {
 
 const FRAME_GAP = 12;
 
+// Breakpoint for switching from full-width to strip mode
+const STRIP_BREAKPOINT = 700;
+
 const AppContent = () => {
-  const { height: screenHeight } = useWindowDimensions();
+  const { height: windowHeight, width: screenWidth } = useWindowDimensions();
+
+  // Store the initial/max height to prevent keyboard resize on mobile web
+  const initialHeightRef = useRef(windowHeight);
+
+  // On mobile web, use the larger of current or initial height to prevent
+  // layout compression when the keyboard appears
+  const screenHeight = Platform.OS === 'web'
+    ? Math.max(windowHeight, initialHeightRef.current)
+    : windowHeight;
+
+  // Update initial height only when width changes (orientation change) or height increases
+  useEffect(() => {
+    if (windowHeight > initialHeightRef.current) {
+      initialHeightRef.current = windowHeight;
+    }
+  }, [windowHeight, screenWidth]);
+
+  // On web, modify viewport meta to prevent keyboard resize
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport && !viewport.content.includes('interactive-widget')) {
+        viewport.content = viewport.content + ', interactive-widget=overlays-content';
+      }
+      // Also set min-height on root to prevent shrinking
+      const root = document.getElementById('root');
+      if (root) {
+        root.style.minHeight = initialHeightRef.current + 'px';
+      }
+    }
+  }, []);
+
+  const useStripMode = screenWidth >= STRIP_BREAKPOINT;
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
     AlfaSlabOne_400Regular,
@@ -477,8 +513,8 @@ const AppContent = () => {
   const perforations = Array.from({ length: perforationCount }, (_, i) => i);
 
   return (
-    <View style={styles.outerWrapper}>
-    <View style={styles.safeArea}>
+    <View style={[styles.outerWrapper, !useStripMode && styles.outerWrapperFull]}>
+    <View style={[styles.safeArea, useStripMode && styles.safeAreaStrip]}>
       <StatusBar style="dark" />
       {/* Left perforations */}
       <View style={styles.perforationStrip} pointerEvents="none">
@@ -496,7 +532,7 @@ const AppContent = () => {
           {/* Header Frame - partially off-screen at top */}
           <View style={[frameStyle, styles.headerFrame, { marginTop: -FRAME_HEIGHT * (Platform.OS === 'web' ? 0.65 : 0.45) }]}>
             <View style={styles.titleRow}>
-              <Logo size={75} color="#f78e6a" />
+              <Logo size={60} color="#f78e6a" />
               <View style={styles.titleText}>
                 <AutoSizeText
                   style={[
@@ -505,8 +541,8 @@ const AppContent = () => {
                     getTitleFontStyle(sourceLanguage.code) === 'montserrat' ? styles.titleFontMontserrat :
                     styles.titleFontSystem
                   ]}
-                  maxFontSize={28}
-                  minFontSize={14}
+                  maxFontSize={22}
+                  minFontSize={12}
                   numberOfLines={2}
                 >
                   {currentTranslation.title[0]}{'\n'}{currentTranslation.title[1]}
@@ -591,14 +627,19 @@ const AppContent = () => {
 const styles = StyleSheet.create({
   outerWrapper: {
     flex: 1,
-    backgroundColor: Platform.OS === 'web' ? '#333' : '#f78e6a',
+    backgroundColor: '#333',
     alignItems: 'center',
+  },
+  outerWrapperFull: {
+    backgroundColor: '#f78e6a',
   },
   safeArea: {
     flex: 1,
     backgroundColor: '#f78e6a',
     width: '100%',
-    maxWidth: Platform.OS === 'web' ? 414 : undefined,
+  },
+  safeAreaStrip: {
+    maxWidth: 414,
   },
   container: {
     flex: 1,

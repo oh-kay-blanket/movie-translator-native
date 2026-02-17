@@ -9,10 +9,15 @@ import {
   ScrollView,
   Animated,
   Image,
+  useWindowDimensions,
 } from 'react-native';
 
 
+const STRIP_BREAKPOINT = 700;
+
 const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange, showTranslatedName = false, allTranslations = {}, allPosters = {} }) => {
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const useStripMode = screenWidth >= STRIP_BREAKPOINT;
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -96,13 +101,16 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
         visible={modalVisible}
         transparent={true}
         animationType="none"
+        presentationStyle="overFullScreen"
+        statusBarTranslucent={true}
         onRequestClose={closePicker}
       >
-        <View style={styles.modalContainer}>
-          <Animated.View style={[styles.modalOverlay, { opacity: fadeAnim }]}>
+        <View style={[styles.modalContainer, { width: screenWidth, height: screenHeight }]}>
+          <Animated.View style={[styles.modalOverlay, { width: screenWidth, height: screenHeight, opacity: fadeAnim }]}>
             <Pressable style={styles.overlayPressable} onPress={closePicker} />
           </Animated.View>
-          <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 600] }) }] }]}>
+          <View style={[styles.modalFrame, useStripMode && styles.modalFrameStrip]}>
+            <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 600] }) }] }]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{selectLanguageText || 'Select Language'}</Text>
               <TouchableOpacity
@@ -162,6 +170,7 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
               })}
             </ScrollView>
           </Animated.View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -171,22 +180,38 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
 const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
+    direction: 'ltr',
   },
   pickerButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
+    direction: 'ltr',
   },
   pickerButtonText: {
     color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'left',
+    writingDirection: 'ltr',
   },
   modalContainer: {
     flex: 1,
+  },
+  modalFrame: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'center',
     justifyContent: 'flex-end',
   },
+  modalFrameStrip: {
+    maxWidth: 414,
+  },
   modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   overlayPressable: {
@@ -228,15 +253,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    direction: 'ltr',
   },
   listItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    direction: 'ltr',
   },
   listItemTextContainer: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 12,
+    direction: 'ltr',
   },
   listItemDefault: {
     backgroundColor: '#f9f9f9',
@@ -249,6 +277,8 @@ const styles = StyleSheet.create({
   listItemText: {
     fontSize: 16,
     color: '#333',
+    textAlign: 'left',
+    writingDirection: 'ltr',
   },
   listItemTextSelected: {
     color: '#333',
@@ -258,26 +288,32 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666',
     marginTop: 2,
+    textAlign: 'left',
+    writingDirection: 'ltr',
   },
   previewContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth: '50%',
+    flex: 1,
+    direction: 'ltr',
   },
   previewPoster: {
-    width: 30,
-    height: 45,
-    borderRadius: 3,
+    width: 33,
+    height: 50,
+    borderRadius: 4,
     backgroundColor: '#ddd',
+    flexShrink: 0,
   },
   previewPosterEmpty: {
     backgroundColor: '#eee',
   },
   previewTitle: {
     flex: 1,
-    marginLeft: 8,
-    fontSize: 12,
-    color: '#666',
+    marginLeft: 10,
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'left',
+    writingDirection: 'ltr',
   },
   previewTitleEmpty: {
     color: '#bbb',

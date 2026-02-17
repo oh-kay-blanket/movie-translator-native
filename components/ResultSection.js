@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable, Dimensions, Platform } from 'react-native';
-
-const { width: screenWidth } = Dimensions.get('window');
-const POSTER_WIDTH = Platform.OS === 'web' ? Math.min(screenWidth * 0.3, 120) : screenWidth * 0.3;
-const POSTER_HEIGHT = POSTER_WIDTH * 1.5;
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Pressable } from 'react-native';
 import * as Speech from 'expo-speech';
 import Svg, { Path } from 'react-native-svg';
 import LanguagePicker from './LanguagePicker';
+
+const getPosterSize = (frameHeight) => {
+  // Limit poster height to 50% of frame, with 2:3 aspect ratio
+  const maxHeight = frameHeight * 0.5;
+  const height = Math.min(maxHeight, 180);
+  const width = height / 1.5;
+  return { width, height };
+};
 
 const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
 const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
@@ -69,10 +73,10 @@ const ResultSection = ({
           <View style={styles.resultRow}>
             {translatedPoster ? (
               <TouchableOpacity onPress={() => setShowPosterModal(true)}>
-                <Image source={{ uri: translatedPoster }} style={styles.poster} />
+                <Image source={{ uri: translatedPoster }} style={[styles.poster, getPosterSize(frameHeight)]} />
               </TouchableOpacity>
             ) : translatedTitle && !translatedTitle.includes(translations.noTitleFound) ? (
-              <View style={[styles.poster, styles.noPoster]}>
+              <View style={[styles.poster, styles.noPoster, getPosterSize(frameHeight)]}>
                 <Text style={styles.noPosterText}>{translations.noPoster}</Text>
               </View>
             ) : null}
@@ -106,6 +110,8 @@ const ResultSection = ({
           visible={showPosterModal}
           transparent={true}
           animationType="fade"
+          presentationStyle="overFullScreen"
+          statusBarTranslucent={true}
           onRequestClose={() => setShowPosterModal(false)}
         >
           <Pressable
@@ -135,8 +141,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   poster: {
-    width: POSTER_WIDTH,
-    height: POSTER_HEIGHT,
     borderRadius: 8,
     backgroundColor: '#ccc',
   },
