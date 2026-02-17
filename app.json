@@ -28,7 +28,8 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "themeColor": "#f78e6a"
     },
     "plugins": [
       "expo-font",
