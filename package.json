@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build-preview": "npx eas build --platform android --profile preview",
-    "build-prod": "npx eas build --platform android --profile preview",
+    "build-prod": "npx eas build --platform android --profile production",
     "deploy:web": "expo export --platform web && cd dist && vercel --prod"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,10 @@ import {
   Modal,
   Pressable,
   Platform,
-} from 'react-native';
+} from "react-native";
 
-import LanguagePicker from './LanguagePicker';
-import AutocompleteDropdown from './AutocompleteDropdown';
+import LanguagePicker from "./LanguagePicker";
+import AutocompleteDropdown from "./AutocompleteDropdown";
 
 const getPosterSize = (frameHeight) => {
   // Limit poster height to 50% of frame, with 2:3 aspect ratio
@@ -23,7 +23,27 @@ const getPosterSize = (frameHeight) => {
   return { width, height };
 };
 
-const latinScriptLanguages = ['ID', 'CZ', 'DK', 'DE', 'US', 'ES', 'FR', 'HU', 'IT', 'NL', 'NO', 'PL', 'BR', 'PT', 'RO', 'FI', 'SE', 'VN', 'TR'];
+const latinScriptLanguages = [
+  "ID",
+  "CZ",
+  "DK",
+  "DE",
+  "US",
+  "ES",
+  "FR",
+  "HU",
+  "IT",
+  "NL",
+  "NO",
+  "PL",
+  "BR",
+  "PT",
+  "RO",
+  "FI",
+  "SE",
+  "VN",
+  "TR",
+];
 const usesLatinScript = (langCode) => latinScriptLanguages.includes(langCode);
 
 const SourceSection = ({
@@ -58,7 +78,7 @@ const SourceSection = ({
 
   const handleClear = () => {
     Keyboard.dismiss();
-    onInput('');
+    onInput("");
     setShowDropdown(false);
   };
 
@@ -66,17 +86,17 @@ const SourceSection = ({
 
   return (
     <View style={styles.container}>
-        <View style={styles.searchRow}>
-          <LanguagePicker
-            language={language}
-            languageList={languageList}
-            languageNames={languageNames}
-            deviceLanguage={deviceLanguage}
-            selectLanguageText={translations.selectLanguage}
-            onLanguageChange={onLanguageChange}
-          />
+      <View style={styles.searchRow}>
+        <LanguagePicker
+          language={language}
+          languageList={languageList}
+          languageNames={languageNames}
+          deviceLanguage={deviceLanguage}
+          selectLanguageText={translations.selectLanguage}
+          onLanguageChange={onLanguageChange}
+        />
 
-          <View style={styles.inputContainer}>
+        <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             placeholder={translations.placeholder}
@@ -102,28 +122,38 @@ const SourceSection = ({
             onSelect={handleSuggestionSelect}
             visible={showDropdown}
           />
-          </View>
         </View>
+      </View>
 
-        <View style={styles.resultWrapper}>
-          {!!(originalPoster || originalTitle) && (
-            <View style={styles.resultRow}>
-              {originalPoster && (
-                <TouchableOpacity onPress={() => setShowPosterModal(true)}>
-                  <Image source={{ uri: originalPoster }} style={[styles.poster, getPosterSize(frameHeight)]} />
-                </TouchableOpacity>
+      <View style={styles.resultWrapper}>
+        {!!(originalPoster || originalTitle) && (
+          <View style={styles.resultRow}>
+            {originalPoster && (
+              <TouchableOpacity onPress={() => setShowPosterModal(true)}>
+                <Image
+                  source={{ uri: originalPoster }}
+                  style={[styles.poster, getPosterSize(frameHeight)]}
+                />
+              </TouchableOpacity>
+            )}
+            <View style={styles.titleContainer}>
+              <Text
+                style={[
+                  styles.title,
+                  usesLatinScript(language.code)
+                    ? styles.titleFontPrimary
+                    : styles.titleFontFallback,
+                ]}
+              >
+                {loading ? translations.searching : originalTitle}
+              </Text>
+              {!loading && originalYear && (
+                <Text style={styles.year}>({originalYear})</Text>
               )}
-              <View style={styles.titleContainer}>
-                <Text style={[styles.title, usesLatinScript(language.code) ? styles.titleFontPrimary : styles.titleFontFallback]}>
-                  {loading ? translations.searching : originalTitle}
-                </Text>
-                {!loading && originalYear && (
-                  <Text style={styles.year}>({originalYear})</Text>
-                )}
-              </View>
             </View>
-          )}
-        </View>
+          </View>
+        )}
+      </View>
 
       <Modal
         visible={showPosterModal}
@@ -153,29 +183,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     zIndex: 1000,
-    position: 'relative',
+    position: "relative",
   },
   inputContainer: {
     flex: 1,
-    position: 'relative',
+    position: "relative",
     marginLeft: 10,
     paddingBottom: 2,
     zIndex: 1000,
   },
   input: {
-    width: '100%',
-    backgroundColor: '#f78e6a',
+    width: "100%",
+    backgroundColor: "#f78e6a",
     borderWidth: 2,
-    borderColor: '#333',
+    borderColor: "#333",
     borderRadius: 8,
     paddingVertical: 12,
     paddingLeft: 10,
     paddingRight: 35,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   inputWithDropdown: {
     borderBottomLeftRadius: 0,
@@ -183,61 +213,61 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   clearButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     top: 0,
     bottom: 0,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 5,
     zIndex: 10,
   },
   clearButtonText: {
-    color: '#555',
+    color: "#555",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   resultWrapper: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     zIndex: 1,
-    position: 'relative',
+    position: "relative",
   },
   resultRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   poster: {
     borderRadius: 8,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   titleContainer: {
     flex: 1,
     marginLeft: 15,
   },
   title: {
-    color: '#333',
+    color: "#333",
     fontSize: 18,
   },
   titleFontPrimary: {
-    fontFamily: 'AlfaSlabOne_400Regular',
+    fontFamily: "AlfaSlabOne_400Regular",
   },
   titleFontFallback: {
-    fontWeight: Platform.select({ web: '700', default: '600' }),
+    fontWeight: Platform.select({ web: "700", default: "600" }),
   },
   year: {
-    color: '#555',
+    color: "#555",
     fontSize: 14,
     marginTop: 4,
   },
   posterModalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   posterLarge: {
-    width: '90%',
-    height: '80%',
+    width: "90%",
+    height: "80%",
   },
 });
 

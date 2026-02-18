@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,21 @@ import {
   Animated,
   Image,
   useWindowDimensions,
-} from 'react-native';
-
+} from "react-native";
 
 const STRIP_BREAKPOINT = 700;
 
-const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage, selectLanguageText, onLanguageChange, showTranslatedName = false, allTranslations = {}, allPosters = {} }) => {
+const LanguagePicker = ({
+  language,
+  languageList,
+  languageNames,
+  deviceLanguage,
+  selectLanguageText,
+  onLanguageChange,
+  showTranslatedName = false,
+  allTranslations = {},
+  allPosters = {},
+}) => {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const useStripMode = screenWidth >= STRIP_BREAKPOINT;
   const [showPicker, setShowPicker] = useState(false);
@@ -67,33 +76,34 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
 
   // Find the device language in the list and its index
   const deviceLangIndex = deviceLanguage
-    ? languageList.findIndex(lang => lang.code === deviceLanguage.code)
+    ? languageList.findIndex((lang) => lang.code === deviceLanguage.code)
     : -1;
 
   // Create reordered list with device language first (if it exists in the list)
-  const reorderedList = deviceLangIndex >= 0
-    ? [
-        languageList[deviceLangIndex],
-        ...languageList.filter((_, i) => i !== deviceLangIndex),
-      ]
-    : languageList;
+  const reorderedList =
+    deviceLangIndex >= 0
+      ? [
+          languageList[deviceLangIndex],
+          ...languageList.filter((_, i) => i !== deviceLangIndex),
+        ]
+      : languageList;
 
   // Map reordered index back to original index
   const getOriginalIndex = (reorderedIndex) => {
     if (deviceLangIndex < 0) return reorderedIndex;
     if (reorderedIndex === 0) return deviceLangIndex;
     const lang = reorderedList[reorderedIndex];
-    return languageList.findIndex(l => l.code === lang.code);
+    return languageList.findIndex((l) => l.code === lang.code);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.pickerButton}
-        onPress={openPicker}
-      >
+      <TouchableOpacity style={styles.pickerButton} onPress={openPicker}>
         <Text style={styles.pickerButtonText}>
-          {showTranslatedName && languageNames ? languageNames[language.code] : language.name} ▼
+          {showTranslatedName && languageNames
+            ? languageNames[language.code]
+            : language.name}{" "}
+          ▼
         </Text>
       </TouchableOpacity>
 
@@ -105,71 +115,125 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
         statusBarTranslucent={true}
         onRequestClose={closePicker}
       >
-        <View style={[styles.modalContainer, { width: screenWidth, height: screenHeight }]}>
-          <Animated.View style={[styles.modalOverlay, { width: screenWidth, height: screenHeight, opacity: fadeAnim }]}>
+        <View
+          style={[
+            styles.modalContainer,
+            { width: screenWidth, height: screenHeight },
+          ]}
+        >
+          <Animated.View
+            style={[
+              styles.modalOverlay,
+              { width: screenWidth, height: screenHeight, opacity: fadeAnim },
+            ]}
+          >
             <Pressable style={styles.overlayPressable} onPress={closePicker} />
           </Animated.View>
-          <View style={[styles.modalFrame, useStripMode && styles.modalFrameStrip]}>
-            <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 600] }) }] }]}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{selectLanguageText || 'Select Language'}</Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={closePicker}
-              >
-                <Text style={styles.closeButtonText}>✕</Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView style={styles.listContainer}>
-              {reorderedList.map((lang, index) => {
-                const isDeviceLanguage = deviceLanguage && lang.code === deviceLanguage.code;
-                const hasTranslations = Object.keys(allTranslations).length > 0;
-                const translatedTitle = allTranslations[lang.code] || (lang.langCode === 'en' ? allTranslations['_default'] : null);
-                const poster = allPosters[lang.langCode];
-                return (
-                  <TouchableOpacity
-                    key={lang.code}
-                    style={[
-                      styles.listItem,
-                      language.code === lang.code && styles.listItemSelected,
-                      isDeviceLanguage && styles.listItemDefault,
-                    ]}
-                    onPress={() => handleSelect(getOriginalIndex(index))}
-                  >
-                    <View style={styles.listItemContent}>
-                      <View style={styles.listItemTextContainer}>
-                        <Text
-                          style={[
-                            styles.listItemText,
-                            language.code === lang.code && styles.listItemTextSelected,
-                          ]}
-                        >
-                          {showTranslatedName && languageNames ? languageNames[lang.code] : lang.name}
-                        </Text>
-                        {languageNames && languageNames[lang.code] !== lang.name && (
-                          <Text style={styles.listItemSubtext}>
-                            {showTranslatedName ? lang.name : languageNames[lang.code]}
+          <View
+            style={[styles.modalFrame, useStripMode && styles.modalFrameStrip]}
+          >
+            <Animated.View
+              style={[
+                styles.modalContent,
+                {
+                  transform: [
+                    {
+                      translateY: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 600],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {selectLanguageText || "Select Language"}
+                </Text>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={closePicker}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={styles.listContainer}>
+                {reorderedList.map((lang, index) => {
+                  const isDeviceLanguage =
+                    deviceLanguage && lang.code === deviceLanguage.code;
+                  const hasTranslations =
+                    Object.keys(allTranslations).length > 0;
+                  const translatedTitle =
+                    allTranslations[lang.code] ||
+                    (lang.langCode === "en"
+                      ? allTranslations["_default"]
+                      : null);
+                  const poster = allPosters[lang.langCode];
+                  return (
+                    <TouchableOpacity
+                      key={lang.code}
+                      style={[
+                        styles.listItem,
+                        language.code === lang.code && styles.listItemSelected,
+                        isDeviceLanguage && styles.listItemDefault,
+                      ]}
+                      onPress={() => handleSelect(getOriginalIndex(index))}
+                    >
+                      <View style={styles.listItemContent}>
+                        <View style={styles.listItemTextContainer}>
+                          <Text
+                            style={[
+                              styles.listItemText,
+                              language.code === lang.code &&
+                                styles.listItemTextSelected,
+                            ]}
+                          >
+                            {showTranslatedName && languageNames
+                              ? languageNames[lang.code]
+                              : lang.name}
                           </Text>
+                          {languageNames &&
+                            languageNames[lang.code] !== lang.name && (
+                              <Text style={styles.listItemSubtext}>
+                                {showTranslatedName
+                                  ? lang.name
+                                  : languageNames[lang.code]}
+                              </Text>
+                            )}
+                        </View>
+                        {hasTranslations && (
+                          <View style={styles.previewContainer}>
+                            {poster ? (
+                              <Image
+                                source={{ uri: poster }}
+                                style={styles.previewPoster}
+                              />
+                            ) : (
+                              <View
+                                style={[
+                                  styles.previewPoster,
+                                  styles.previewPosterEmpty,
+                                ]}
+                              />
+                            )}
+                            <Text
+                              style={[
+                                styles.previewTitle,
+                                !translatedTitle && styles.previewTitleEmpty,
+                              ]}
+                              numberOfLines={2}
+                            >
+                              {translatedTitle || "—"}
+                            </Text>
+                          </View>
                         )}
                       </View>
-                      {hasTranslations && (
-                        <View style={styles.previewContainer}>
-                          {poster ? (
-                            <Image source={{ uri: poster }} style={styles.previewPoster} />
-                          ) : (
-                            <View style={[styles.previewPoster, styles.previewPosterEmpty]} />
-                          )}
-                          <Text style={[styles.previewTitle, !translatedTitle && styles.previewTitleEmpty]} numberOfLines={2}>
-                            {translatedTitle || '—'}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </Animated.View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </Animated.View>
           </View>
         </View>
       </Modal>
@@ -179,71 +243,71 @@ const LanguagePicker = ({ language, languageList, languageNames, deviceLanguage,
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'flex-start',
-    direction: 'ltr',
+    alignItems: "flex-start",
+    direction: "ltr",
   },
   pickerButton: {
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    direction: 'ltr',
+    paddingRight: 10,
+    direction: "ltr",
   },
   pickerButtonText: {
-    color: '#333',
+    color: "#333",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    writingDirection: 'ltr',
+    fontWeight: "bold",
+    textAlign: "left",
+    writingDirection: "ltr",
   },
   modalContainer: {
     flex: 1,
   },
   modalFrame: {
     flex: 1,
-    width: '100%',
-    alignSelf: 'center',
-    justifyContent: 'flex-end',
+    width: "100%",
+    alignSelf: "center",
+    justifyContent: "flex-end",
   },
   modalFrameStrip: {
     maxWidth: 414,
   },
   modalOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   overlayPressable: {
     flex: 1,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '60%',
+    maxHeight: "60%",
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   closeButton: {
     padding: 5,
   },
   closeButtonText: {
     fontSize: 20,
-    color: '#333',
-    fontWeight: 'bold',
+    color: "#333",
+    fontWeight: "bold",
   },
   listContainer: {
     paddingBottom: 20,
@@ -252,71 +316,71 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    direction: 'ltr',
+    borderBottomColor: "#eee",
+    direction: "ltr",
   },
   listItemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    direction: 'ltr',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    direction: "ltr",
   },
   listItemTextContainer: {
     flex: 1,
     marginRight: 12,
-    direction: 'ltr',
+    direction: "ltr",
   },
   listItemDefault: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     borderBottomWidth: 2,
-    borderBottomColor: '#ddd',
+    borderBottomColor: "#ddd",
   },
   listItemSelected: {
-    backgroundColor: '#fff5f5',
+    backgroundColor: "#fff5f5",
   },
   listItemText: {
     fontSize: 16,
-    color: '#333',
-    textAlign: 'left',
-    writingDirection: 'ltr',
+    color: "#333",
+    textAlign: "left",
+    writingDirection: "ltr",
   },
   listItemTextSelected: {
-    color: '#333',
-    fontWeight: 'bold',
+    color: "#333",
+    fontWeight: "bold",
   },
   listItemSubtext: {
     fontSize: 13,
-    color: '#666',
+    color: "#666",
     marginTop: 2,
-    textAlign: 'left',
-    writingDirection: 'ltr',
+    textAlign: "left",
+    writingDirection: "ltr",
   },
   previewContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
-    direction: 'ltr',
+    direction: "ltr",
   },
   previewPoster: {
     width: 33,
     height: 50,
     borderRadius: 4,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     flexShrink: 0,
   },
   previewPosterEmpty: {
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
   },
   previewTitle: {
     flex: 1,
     marginLeft: 10,
     fontSize: 13,
-    color: '#555',
-    textAlign: 'left',
-    writingDirection: 'ltr',
+    color: "#555",
+    textAlign: "left",
+    writingDirection: "ltr",
   },
   previewTitleEmpty: {
-    color: '#bbb',
+    color: "#bbb",
   },
 });
 
