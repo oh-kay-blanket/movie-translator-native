@@ -64,6 +64,7 @@ const SourceSection = ({
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPosterModal, setShowPosterModal] = useState(false);
+  const [inputLayout, setInputLayout] = useState(null);
 
   const handleTextChange = (text) => {
     onInput(text);
@@ -96,7 +97,10 @@ const SourceSection = ({
           onLanguageChange={onLanguageChange}
         />
 
-        <View style={styles.inputContainer}>
+        <View
+          style={styles.inputContainer}
+          onLayout={(e) => setInputLayout(e.nativeEvent.layout)}
+        >
           <TextInput
             style={styles.input}
             placeholder={translations.placeholder}
@@ -117,13 +121,15 @@ const SourceSection = ({
               <Text style={styles.clearButtonText}>✕</Text>
             </Pressable>
           )}
-          <AutocompleteDropdown
-            suggestions={topHits}
-            onSelect={handleSuggestionSelect}
-            visible={showDropdown}
-          />
         </View>
       </View>
+
+      <AutocompleteDropdown
+        suggestions={topHits}
+        onSelect={handleSuggestionSelect}
+        visible={showDropdown}
+        inputLayout={inputLayout}
+      />
 
       <View style={styles.resultWrapper}>
         {!!(originalPoster || originalTitle) && (
@@ -181,6 +187,8 @@ const SourceSection = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: "relative",
+    zIndex: 1,
   },
   searchRow: {
     flexDirection: "row",
