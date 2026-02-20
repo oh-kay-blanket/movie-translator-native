@@ -50,9 +50,12 @@ const SourceSection = ({
   language,
   languageList,
   languageNames,
-  deviceLanguage,
   query,
   topHits,
+  hasMoreHits,
+  onLoadMoreHits,
+  dropdownVisible,
+  onDropdownVisibilityChange,
   originalTitle,
   originalYear,
   originalPoster,
@@ -62,25 +65,24 @@ const SourceSection = ({
   onInput,
   frameHeight,
 }) => {
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showPosterModal, setShowPosterModal] = useState(false);
   const [inputLayout, setInputLayout] = useState(null);
 
   const handleTextChange = (text) => {
     onInput(text);
-    setShowDropdown(text.length > 0);
+    onDropdownVisibilityChange(text.length > 0);
   };
 
   const handleSuggestionSelect = (suggestion) => {
     onInput(suggestion.title, suggestion.id);
-    setShowDropdown(false);
+    onDropdownVisibilityChange(false);
     Keyboard.dismiss();
   };
 
   const handleClear = () => {
     Keyboard.dismiss();
     onInput("");
-    setShowDropdown(false);
+    onDropdownVisibilityChange(false);
   };
 
   const hasContent = originalPoster || originalTitle;
@@ -92,7 +94,6 @@ const SourceSection = ({
           language={language}
           languageList={languageList}
           languageNames={languageNames}
-          deviceLanguage={deviceLanguage}
           selectLanguageText={translations.selectLanguage}
           onLanguageChange={onLanguageChange}
         />
@@ -107,8 +108,7 @@ const SourceSection = ({
             placeholderTextColor="#444"
             value={query}
             onChangeText={handleTextChange}
-            onFocus={() => setShowDropdown(query.length > 0)}
-            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            onFocus={() => onDropdownVisibilityChange(query.length > 0)}
             autoCorrect={false}
             autoCapitalize="none"
           />
@@ -127,8 +127,10 @@ const SourceSection = ({
       <AutocompleteDropdown
         suggestions={topHits}
         onSelect={handleSuggestionSelect}
-        visible={showDropdown}
+        visible={dropdownVisible}
         inputLayout={inputLayout}
+        hasMore={hasMoreHits}
+        onLoadMore={onLoadMoreHits}
       />
 
       <View style={styles.resultWrapper}>

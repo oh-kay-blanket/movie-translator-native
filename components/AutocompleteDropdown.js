@@ -14,6 +14,8 @@ const AutocompleteDropdown = ({
   onSelect,
   visible,
   inputLayout,
+  hasMore,
+  onLoadMore,
 }) => {
   if (!visible || suggestions.length === 0 || !inputLayout) {
     return null;
@@ -57,6 +59,15 @@ const AutocompleteDropdown = ({
             </View>
           </TouchableOpacity>
         ))}
+        {hasMore && (
+          <TouchableOpacity
+            style={styles.moreButton}
+            onPress={onLoadMore}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.moreButtonText}>▼</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
@@ -108,6 +119,17 @@ const styles = StyleSheet.create({
     color: "#555",
     fontSize: 13,
     marginTop: 2,
+  },
+  moreButton: {
+    padding: 12,
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(51, 51, 51, 0.35)",
+  },
+  moreButtonText: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 
