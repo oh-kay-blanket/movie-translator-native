@@ -2121,6 +2121,14 @@ const AppContent = () => {
                     Kay Plunkett
                   </Text>
                 </Text>
+                <Text
+                  style={[styles.modalLink, { marginBottom: 20 }]}
+                  onPress={() =>
+                    Linking.openURL("https://oh-kay-blanket.github.io/movie-translator-native/privacy-policy.html")
+                  }
+                >
+                  Privacy Policy
+                </Text>
                 <TouchableOpacity
                   onPress={() => setInfoVisible(false)}
                   style={styles.closeButton}
@@ -2238,26 +2246,23 @@ const styles = StyleSheet.create({
     padding: 25,
     width: "100%",
     maxWidth: 350,
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: "#333",
     marginBottom: 15,
-    textAlign: "center",
   },
   modalText: {
     fontSize: 16,
     color: "#666",
-    textAlign: "center",
     marginBottom: 20,
     lineHeight: 22,
   },
   modalAttribution: {
     fontSize: 12,
     color: "#999",
-    textAlign: "center",
     marginBottom: 20,
     fontStyle: "italic",
   },
