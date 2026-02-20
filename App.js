@@ -2088,7 +2088,14 @@ const AppContent = () => {
           </View>
 
           {/* Info Modal */}
-          <Modal visible={infoVisible} transparent animationType="fade">
+          <Modal
+            visible={infoVisible}
+            transparent
+            animationType="fade"
+            presentationStyle="overFullScreen"
+            statusBarTranslucent={true}
+            onRequestClose={() => setInfoVisible(false)}
+          >
             <Pressable
               style={styles.modalOverlay}
               onPress={() => setInfoVisible(false)}
