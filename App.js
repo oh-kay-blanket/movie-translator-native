@@ -1632,7 +1632,8 @@ const AppContent = () => {
   const deviceLanguage = getDeviceLanguage();
 
   // Sort language list alphabetically by the source language's spelling
-  const sourceLanguageNames = languageNames[sourceLanguage.code] || languageNames.US;
+  const sourceLanguageNames =
+    languageNames[sourceLanguage.code] || languageNames.US;
   const sortedLanguageList = [...languageList].sort((a, b) => {
     const nameA = sourceLanguageNames[a.code] || a.name;
     const nameB = sourceLanguageNames[b.code] || b.name;
@@ -1957,8 +1958,8 @@ const AppContent = () => {
     overflow: "hidden",
   };
 
-  // Generate perforation positions
-  const perforationCount = Math.floor(screenHeight / 40);
+  // Generate perforation positions (add extra to extend beyond screen edges)
+  const perforationCount = Math.ceil(screenHeight / 37) + 2;
   const perforations = Array.from({ length: perforationCount }, (_, i) => i);
 
   return (
