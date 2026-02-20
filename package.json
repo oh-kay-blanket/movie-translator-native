@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "build-preview": "npx eas build --platform android --profile preview",
     "build-prod": "npx eas build --platform android --profile production",
-    "deploy:web": "expo export --platform web && cd dist && vercel --prod"
+    "deploy:web": "vercel --prod"
   },
   "dependencies": {
     "@expo-google-fonts/alfa-slab-one": "^0.4.1",
