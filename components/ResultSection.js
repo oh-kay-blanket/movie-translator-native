@@ -190,15 +190,15 @@ const ResultSection = ({
 
       // Android-specific patterns (found in voice identifier or name)
       const androidMalePatterns = [
-        "#male",      // Google TTS pattern: "en-us-x-sfg#male_1-local"
-        "male_",      // Samsung/other: "male_1", "male_2"
-        "-male",      // Alternative pattern
-        "_male",      // Alternative pattern
-        "studio-m",   // Google Studio voices (male)
-        "wavenet-b",  // Google WaveNet male voices
-        "wavenet-d",  // Google WaveNet male voices
-        "neural2-b",  // Google Neural2 male voices
-        "neural2-d",  // Google Neural2 male voices
+        "#male", // Google TTS pattern: "en-us-x-sfg#male_1-local"
+        "male_", // Samsung/other: "male_1", "male_2"
+        "-male", // Alternative pattern
+        "_male", // Alternative pattern
+        "studio-m", // Google Studio voices (male)
+        "wavenet-b", // Google WaveNet male voices
+        "wavenet-d", // Google WaveNet male voices
+        "neural2-b", // Google Neural2 male voices
+        "neural2-d", // Google Neural2 male voices
         "standard-b", // Google Standard male voices
         "standard-d", // Google Standard male voices
       ];
@@ -218,8 +218,6 @@ const ResultSection = ({
       Speech.speak(translatedTitle, {
         language: language.langCode,
         voice: maleVoice?.identifier,
-        pitch: 0.9, // Lower pitch for deeper voice
-        rate: 0.9, // Slightly slower for dramatic effect
       });
     }
   };
