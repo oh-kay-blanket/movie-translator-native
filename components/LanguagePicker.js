@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   Pressable,
-  ScrollView,
+  FlatList,
   Animated,
   Image,
   useWindowDimensions,
@@ -18,7 +18,6 @@ const LanguagePicker = ({
   language,
   languageList,
   languageNames,
-  deviceLanguage,
   selectLanguageText,
   onLanguageChange,
   showTranslatedName = false,
@@ -31,6 +30,7 @@ const LanguagePicker = ({
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(1)).current; // 1 = off screen, 0 = visible
+  const flatListRef = useRef(null);
 
   const openPicker = () => {
     fadeAnim.setValue(0);
@@ -48,7 +48,9 @@ const LanguagePicker = ({
         duration: 250,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      scrollToCurrentLanguage();
+    });
   };
 
   const closePicker = () => {
@@ -74,26 +76,76 @@ const LanguagePicker = ({
     closePicker();
   };
 
-  // Find the device language in the list and its index
-  const deviceLangIndex = deviceLanguage
-    ? languageList.findIndex((lang) => lang.code === deviceLanguage.code)
-    : -1;
+  // Scroll to current language position
+  const scrollToCurrentLanguage = () => {
+    const currentIndex = languageList.findIndex(
+      (lang) => lang.code === language.code,
+    );
+    if (currentIndex > 0) {
+      flatListRef.current?.scrollToIndex({
+        index: currentIndex,
+        animated: false,
+        viewPosition: 0,
+      });
+    }
+  };
 
-  // Create reordered list with device language first (if it exists in the list)
-  const reorderedList =
-    deviceLangIndex >= 0
-      ? [
-          languageList[deviceLangIndex],
-          ...languageList.filter((_, i) => i !== deviceLangIndex),
-        ]
-      : languageList;
+  const renderItem = ({ item: lang, index }) => {
+    const hasTranslations = Object.keys(allTranslations).length > 0;
+    const translatedTitle =
+      allTranslations[lang.code] ||
+      (lang.langCode === "en" ? allTranslations["_default"] : null);
+    const poster = allPosters[lang.langCode];
 
-  // Map reordered index back to original index
-  const getOriginalIndex = (reorderedIndex) => {
-    if (deviceLangIndex < 0) return reorderedIndex;
-    if (reorderedIndex === 0) return deviceLangIndex;
-    const lang = reorderedList[reorderedIndex];
-    return languageList.findIndex((l) => l.code === lang.code);
+    return (
+      <TouchableOpacity
+        style={[
+          styles.listItem,
+          language.code === lang.code && styles.listItemSelected,
+        ]}
+        onPress={() => handleSelect(index)}
+      >
+        <View style={styles.listItemContent}>
+          <View style={styles.listItemTextContainer}>
+            <Text
+              style={[
+                styles.listItemText,
+                language.code === lang.code && styles.listItemTextSelected,
+              ]}
+            >
+              {showTranslatedName && languageNames
+                ? languageNames[lang.code]
+                : lang.name}
+            </Text>
+            {languageNames && languageNames[lang.code] !== lang.name && (
+              <Text style={styles.listItemSubtext}>
+                {showTranslatedName ? lang.name : languageNames[lang.code]}
+              </Text>
+            )}
+          </View>
+          {hasTranslations && (
+            <View style={styles.previewContainer}>
+              {poster ? (
+                <Image source={{ uri: poster }} style={styles.previewPoster} />
+              ) : (
+                <View
+                  style={[styles.previewPoster, styles.previewPosterEmpty]}
+                />
+              )}
+              <Text
+                style={[
+                  styles.previewTitle,
+                  !translatedTitle && styles.previewTitleEmpty,
+                ]}
+                numberOfLines={2}
+              >
+                {translatedTitle || "—"}
+              </Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -158,81 +210,14 @@ const LanguagePicker = ({
                   <Text style={styles.closeButtonText}>✕</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView style={styles.listContainer}>
-                {reorderedList.map((lang, index) => {
-                  const isDeviceLanguage =
-                    deviceLanguage && lang.code === deviceLanguage.code;
-                  const hasTranslations =
-                    Object.keys(allTranslations).length > 0;
-                  const translatedTitle =
-                    allTranslations[lang.code] ||
-                    (lang.langCode === "en"
-                      ? allTranslations["_default"]
-                      : null);
-                  const poster = allPosters[lang.langCode];
-                  return (
-                    <TouchableOpacity
-                      key={lang.code}
-                      style={[
-                        styles.listItem,
-                        language.code === lang.code && styles.listItemSelected,
-                        isDeviceLanguage && styles.listItemDefault,
-                      ]}
-                      onPress={() => handleSelect(getOriginalIndex(index))}
-                    >
-                      <View style={styles.listItemContent}>
-                        <View style={styles.listItemTextContainer}>
-                          <Text
-                            style={[
-                              styles.listItemText,
-                              language.code === lang.code &&
-                                styles.listItemTextSelected,
-                            ]}
-                          >
-                            {showTranslatedName && languageNames
-                              ? languageNames[lang.code]
-                              : lang.name}
-                          </Text>
-                          {languageNames &&
-                            languageNames[lang.code] !== lang.name && (
-                              <Text style={styles.listItemSubtext}>
-                                {showTranslatedName
-                                  ? lang.name
-                                  : languageNames[lang.code]}
-                              </Text>
-                            )}
-                        </View>
-                        {hasTranslations && (
-                          <View style={styles.previewContainer}>
-                            {poster ? (
-                              <Image
-                                source={{ uri: poster }}
-                                style={styles.previewPoster}
-                              />
-                            ) : (
-                              <View
-                                style={[
-                                  styles.previewPoster,
-                                  styles.previewPosterEmpty,
-                                ]}
-                              />
-                            )}
-                            <Text
-                              style={[
-                                styles.previewTitle,
-                                !translatedTitle && styles.previewTitleEmpty,
-                              ]}
-                              numberOfLines={2}
-                            >
-                              {translatedTitle || "—"}
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
+              <FlatList
+                ref={flatListRef}
+                data={languageList}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.code}
+                style={styles.listContainer}
+                onScrollToIndexFailed={() => {}}
+              />
             </Animated.View>
           </View>
         </View>
@@ -329,11 +314,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
     direction: "ltr",
-  },
-  listItemDefault: {
-    backgroundColor: "#f9f9f9",
-    borderBottomWidth: 2,
-    borderBottomColor: "#ddd",
   },
   listItemSelected: {
     backgroundColor: "#fff5f5",

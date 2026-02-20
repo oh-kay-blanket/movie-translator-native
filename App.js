@@ -10,6 +10,7 @@ import {
   Pressable,
   Platform,
   Linking,
+  Keyboard,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -1600,16 +1601,18 @@ const AppContent = () => {
   const [infoVisible, setInfoVisible] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState(getDeviceLanguage);
   const [targetLanguage, setTargetLanguage] = useState(() => {
-    // Set a different default target language than source
+    // Default to French, unless source is already French
     const source = getDeviceLanguage();
-    if (source.langCode === "en") {
-      return languageList.find((lang) => lang.code === "JP") || languageList[0];
+    if (source.code === "FR") {
+      return defaultLanguage; // Fall back to English
     }
-    return defaultLanguage;
+    return languageList.find((lang) => lang.code === "FR") || languageList[0];
   });
   const [query, setQuery] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [topHits, setTopHits] = useState([]);
+  const [allHits, setAllHits] = useState([]);
+  const [visibleHitsCount, setVisibleHitsCount] = useState(6);
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalYear, setOriginalYear] = useState("");
   const [translatedTitle, setTranslatedTitle] = useState("");
@@ -1618,6 +1621,7 @@ const AppContent = () => {
   const [allTranslations, setAllTranslations] = useState({});
   const [allPosters, setAllPosters] = useState({});
   const [backTranslation, setBackTranslation] = useState(null);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   // Calculate frame height for film strip effect
   const VISIBLE_FRAMES = Platform.OS === "web" ? 2.0 : 2.2;
@@ -1627,17 +1631,25 @@ const AppContent = () => {
     translations[sourceLanguage.code] || translations.US;
   const deviceLanguage = getDeviceLanguage();
 
+  // Sort language list alphabetically by the source language's spelling
+  const sourceLanguageNames = languageNames[sourceLanguage.code] || languageNames.US;
+  const sortedLanguageList = [...languageList].sort((a, b) => {
+    const nameA = sourceLanguageNames[a.code] || a.name;
+    const nameB = sourceLanguageNames[b.code] || b.name;
+    return nameA.localeCompare(nameB, sourceLanguage.langCode);
+  });
+
   const handleSourceLanguage = (index) => {
-    const newLanguage = languageList[index];
+    const newLanguage = sortedLanguageList[index];
     logLanguageChanged("source", sourceLanguage.code, newLanguage.code);
     setSourceLanguage(newLanguage);
     setQuery("");
   };
 
-  const handleTargetLanguage = (index) => {
-    const newLanguage = languageList[index];
+  const handleTargetLanguage = (newLanguage) => {
     logLanguageChanged("target", targetLanguage.code, newLanguage.code);
     setBackTranslation(null);
+    setTranslatedTitle("");
     setTargetLanguage(newLanguage);
   };
 
@@ -1645,6 +1657,19 @@ const AppContent = () => {
     setLoading(true);
     setSelectedMovieId(movieId);
     setQuery(text);
+    // Reset visible count when starting a new search
+    if (movieId === null) {
+      setVisibleHitsCount(6);
+    }
+  };
+
+  const handleLoadMoreHits = () => {
+    setVisibleHitsCount((prev) => Math.min(prev + 6, allHits.length));
+  };
+
+  const handleDismissDropdown = () => {
+    setDropdownVisible(false);
+    Keyboard.dismiss();
   };
 
   // Log search when query changes (debounced by parent)
@@ -1653,6 +1678,11 @@ const AppContent = () => {
       logSearch(query, sourceLanguage.code);
     }
   }, [query, sourceLanguage.code]);
+
+  // Update visible hits when count changes
+  useEffect(() => {
+    setTopHits(allHits.slice(0, visibleHitsCount));
+  }, [visibleHitsCount, allHits]);
 
   // MOVIEDB API
   useEffect(() => {
@@ -1666,6 +1696,9 @@ const AppContent = () => {
       setAllTranslations({});
       setAllPosters({});
       setBackTranslation(null);
+      setAllHits([]);
+      setTopHits([]);
+      setVisibleHitsCount(6);
     } else {
       const searchLanguage = `${sourceLanguage.langCode}-${sourceLanguage.code}`;
       const baseURL = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=${searchLanguage}&query=`;
@@ -1675,6 +1708,7 @@ const AppContent = () => {
         .then((data) => {
           if (!data.results || data.results.length === 0) {
             setTopHits([]);
+            setAllHits([]);
             // Only show "no movie found" if user explicitly selected something
             if (selectedMovieId) {
               setOriginalTitle(currentTranslation.noMovieFound);
@@ -1688,16 +1722,16 @@ const AppContent = () => {
           const sortedResults = [...data.results].sort(
             (a, b) => b.popularity - a.popularity,
           );
-          setTopHits(
-            sortedResults.slice(0, 6).map((hit) => ({
-              id: hit.id,
-              title: hit.title,
-              year: hit.release_date ? hit.release_date.substring(0, 4) : "",
-              poster: hit.poster_path
-                ? `${TMDB_IMAGE_BASE}${hit.poster_path}`
-                : null,
-            })),
-          );
+          const mappedHits = sortedResults.slice(0, 20).map((hit) => ({
+            id: hit.id,
+            title: hit.title,
+            year: hit.release_date ? hit.release_date.substring(0, 4) : "",
+            poster: hit.poster_path
+              ? `${TMDB_IMAGE_BASE}${hit.poster_path}`
+              : null,
+          }));
+          setAllHits(mappedHits);
+          setTopHits(mappedHits.slice(0, visibleHitsCount));
 
           // Only fetch full movie details if a movie was explicitly selected
           if (!selectedMovieId) {
@@ -1949,6 +1983,13 @@ const AppContent = () => {
           ))}
         </View>
         <View style={styles.container}>
+          {/* Dismiss overlay for autocomplete dropdown */}
+          {dropdownVisible && (
+            <Pressable
+              style={styles.dropdownDismissOverlay}
+              onPress={handleDismissDropdown}
+            />
+          )}
           {/* Header Frame - partially off-screen at top */}
           <View
             style={[
@@ -1985,16 +2026,19 @@ const AppContent = () => {
           </View>
 
           {/* Source Frame */}
-          <View style={frameStyle}>
+          <View style={[frameStyle, styles.sourceFrame]}>
             <SourceSection
               language={sourceLanguage}
-              languageList={languageList}
+              languageList={sortedLanguageList}
               languageNames={
                 languageNames[sourceLanguage.code] || languageNames.US
               }
-              deviceLanguage={deviceLanguage}
               query={query}
               topHits={topHits}
+              hasMoreHits={allHits.length > visibleHitsCount}
+              onLoadMoreHits={handleLoadMoreHits}
+              dropdownVisible={dropdownVisible}
+              onDropdownVisibilityChange={setDropdownVisible}
               originalTitle={originalTitle}
               originalYear={originalYear}
               originalPoster={originalPoster}
@@ -2010,7 +2054,7 @@ const AppContent = () => {
           <View style={frameStyle}>
             <ResultSection
               language={targetLanguage}
-              languageList={languageList.filter(
+              languageList={sortedLanguageList.filter(
                 (lang) => lang.code !== sourceLanguage.code,
               )}
               languageNames={
@@ -2024,14 +2068,10 @@ const AppContent = () => {
               loading={loading}
               translations={currentTranslation}
               onLanguageChange={(index) => {
-                const filteredList = languageList.filter(
+                const filteredList = sortedLanguageList.filter(
                   (lang) => lang.code !== sourceLanguage.code,
                 );
-                const selectedLang = filteredList[index];
-                const originalIndex = languageList.findIndex(
-                  (lang) => lang.code === selectedLang.code,
-                );
-                handleTargetLanguage(originalIndex);
+                handleTargetLanguage(filteredList[index]);
               }}
               frameHeight={FRAME_HEIGHT}
             />
@@ -2108,6 +2148,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f78e6a",
+  },
+  dropdownDismissOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+  },
+  sourceFrame: {
+    zIndex: 200,
   },
   perforationStrip: {
     position: "absolute",

@@ -86,6 +86,7 @@ const ResultSection = ({
                 <Text style={[
                   styles.title,
                   usesLatinScript(language.code) ? styles.titleFontPrimary : styles.titleFontFallback,
+                  !usesLatinScript(language.code) && styles.titleLarger,
                   translatedTitle?.includes(translations.noTitleFound) && styles.titleMuted
                 ]}>
                   {loading ? translations.searching : translatedTitle}
@@ -177,6 +178,9 @@ const styles = StyleSheet.create({
   },
   titleFontFallback: {
     fontWeight: Platform.select({ web: '700', default: '600' }),
+  },
+  titleLarger: {
+    fontSize: 24,
   },
   titleMuted: {
     color: '#999',
