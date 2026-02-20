@@ -1959,7 +1959,7 @@ const AppContent = () => {
   };
 
   // Generate perforation positions (add extra to extend beyond screen edges)
-  const perforationCount = Math.ceil(screenHeight / 37) + 2;
+  const perforationCount = Math.ceil(screenHeight / 39) + 2;
   const perforations = Array.from({ length: perforationCount }, (_, i) => i);
 
   return (
